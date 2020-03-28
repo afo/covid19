@@ -1,8 +1,8 @@
 ### Graphs
 
 ## [1. Deaths since March 10](https://alex.fo/covid19/deaths.html)
-## [2. Deaths per Mn inhabitants since March 10](https://alex.fo/covid19/deaths_1.html)
-## [3. Deaths per day since first death](https://alex.fo/covid19/deaths_mn.html)
+## [2. Deaths per Mn inhabitants since March 10](https://alex.fo/covid19/deaths_mn.html)
+## [3. Deaths per day since first death](https://alex.fo/covid19/deaths_1.html)
 ## [4. Deaths per day since first death per Mn inhabitants](https://alex.fo/covid19/deaths_mn_1.html)
 
 ### Description
