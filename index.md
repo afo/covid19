@@ -10,9 +10,9 @@ Simple analysis of the COVID-19 situation in the Nordic countries. The Nordic co
 
 It's interesting to track the developments because these countries are very similar, but they have implemented very different mitigation strategies -- see eg: [https://www.nytimes.com/2020/03/28/world/europe/sweden-coronavirus.html](https://www.nytimes.com/2020/03/28/world/europe/sweden-coronavirus.html)
 
-The most relevant plot is **4. Total Deaths per Mn inhabitants, daily figures since first death**.
+The most relevant plot is **4. Total Deaths per Mn inhabitants, daily figures since day of first death**.
 
-The plots are updated daily at 9pm (24hr lag from the data source).
+The plots are updated daily at 9pm CET (24hr data source lag).
 
 ### Data Sources
 
