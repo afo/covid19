@@ -12,7 +12,7 @@ It's interesting to track the developments because these countries are very simi
 
 The most relevant plot is **4. Total Deaths per Mn inhabitants, daily figures since day of first death**.
 
-The plots are updated daily at 9pm CET (24hr data source lag).
+The plots are updated daily at 5AM CET (24hr date lag).
 
 ### Data Sources
 
