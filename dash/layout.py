@@ -8,12 +8,15 @@ from extract_data import get_data
 def generate_layout():
     layout = html.Div(className='container', children=[
         html.Div(className="app-header",
-                 children=[html.Div("COVID19 Nordic Analysis", className="app-header--title")]),
+                 children=[html.Div("COVID19 in the Nordics", className="app-header--title")]),
         dcc.Tabs(children=[
-            dcc.Tab(label="Total Deaths since March 10", id="Tab 1", children=[
+            dcc.Tab(label="Death Analysis", id="Tab 1", children=[
                 html.Div("Subheader", className="app-subheader"),
                 checkboxes("1"),
-                dcc.Graph(id="deaths_plot")
+                html.Div(id="visible_dates", children=[
+                    dcc.DatePickerRange(id='picked-dates')
+                ], style={'margin': 'auto'}),
+                dcc.Graph(id="deaths_plot"),
             ]),
             dcc.Tab(label="Map Preliminary", id="Tab 2", children=[
             ])

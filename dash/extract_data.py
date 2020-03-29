@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 import pandas as pd
 import numpy as np
 import json
@@ -56,6 +57,9 @@ def get_data():
     df_deaths_per_mn_1 = pd.DataFrame(index=df_deaths_1.index)
     for col in df_deaths.columns:
         df_deaths_per_mn_1[col] = df_deaths_1[col] / df_pop[col].values
+
+    date = df_deaths.index[-1].to_pydatetime()+timedelta(days=1)
     obj = {'df_deaths': df_deaths.to_json(), 'df_deaths_per_mn': df_deaths_per_mn.to_json(),
-           'df_deaths_1': df_deaths_1.to_json(), 'df_deaths_per_mn_1': df_deaths_per_mn_1.to_json()}
+           'df_deaths_1': df_deaths_1.to_json(), 'df_deaths_per_mn_1': df_deaths_per_mn_1.to_json(),
+           'date': datetime.timestamp(date)}
     return json.dumps(obj)
