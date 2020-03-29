@@ -19,8 +19,10 @@
     </section>
 
     {% raw %}
-    <div class="container"> <iframe scrolling="no" frameborder="no" border="0"
-      style="position: absolute; height: 100%;display:block; width:100%;" src="https://covid19-nordic.herokuapp.com/"></iframe>
+    <div class="container"> <iframe scrolling="no" frameborder="no" border="0" sandbox="allow-same-origin"
+      style="display:block; width:100%;"
+      onload="this.style.height=(this.contentWindow.document.body.scrollHeight+20)+'px';"
+      src="https://covid19-nordic.herokuapp.com/"></iframe>
   </div>
   {% endraw %}
 
