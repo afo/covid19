@@ -10,18 +10,18 @@ def generate_layout():
     layout = html.Div(className='container', children=[
         html.Div(className="app-header",
                  children=[html.Div("COVID19 in the Nordics", className="app-header--title")]),
-        dcc.Tabs(children=[
-            dcc.Tab(label="Death Analysis", id="Tab 1", children=[
-                html.Div("Subheader", className="app-subheader"),
-                checkboxes("1"),
-                html.Div(id="visible_dates", children=[
-                    dcc.DatePickerRange(id='picked-dates')
-                ], style={'margin': 'auto'}),
-                dcc.Graph(id="deaths_plot"),
-            ]),
-            dcc.Tab(label="Map Preliminary", id="Tab 2", children=[
-            ])
-        ]),
+        html.Div("Select plot", className="app-subheader"),
+        generate_buttons(),
+        html.Label("Countries", style={'font-weight': 'bold'}),
+        country_selection(),
+        html.Br(),
+        html.Div(id="visible_dates", children=[html.Label("Select date interval", style={'font-weight': 'bold'}),
+                                               dcc.DatePickerRange(
+                                                   id='picked-dates')
+                                               ], style={'margin': 'auto'}),
+        dcc.Graph(id="deaths_plot"),
+        # dcc.Tab(label="Map Preliminary", id="Tab 2", children=[
+        # ])
         html.Div(id="data", style={'display': 'none'}, children=get_data()),
         html.Div(id="which_plot", style={'display': 'none'})
     ])
@@ -48,7 +48,7 @@ def generate_buttons():
     return html.Div(children=[deaths, deaths_mn, deaths_1, deaths_mn_1])
 
 
-def country_selection(tab_name):
+def country_selection():
     options = [{
         'label': '🇸🇪 Sweden',
         'value': 'Sweden'
@@ -71,6 +71,6 @@ def country_selection(tab_name):
     }]
 
     value = ["Sweden", "Norway", "Finland", "Denmark", "Iceland"]
-    checklist = dcc.Dropdown(id=f"country_selection{tab_name}", multi=True,
+    checklist = dcc.Dropdown(id=f"country_selection", multi=True,
                              options=options, value=value)
-    return checklist
+    return html.Div([checklist], style={'display': 'inline-block'})

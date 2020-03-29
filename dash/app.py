@@ -32,7 +32,7 @@ y_axis_labels = {'df_deaths': 'Deaths',
 
 
 @app.callback(Output('deaths_plot', 'figure'),
-              [Input('country_selection1', 'value'),
+              [Input('country_selection', 'value'),
                Input('which_plot', 'children'),
                Input('picked-dates', 'start_date'),
                Input('picked-dates', 'end_date')],
@@ -84,7 +84,7 @@ def get_date_picker(json_obj):
     df = pd.read_json(json.loads(json_obj)['df_deaths'])
     start_date = df.index[0]
     end_date = df.index[-1]
-    return start_date, end_date+ timedelta(days=1), start_date, end_date
+    return start_date, end_date + timedelta(days=1), start_date, end_date
 
 @app.callback(Output('visible_dates', 'style'),
               [Input('which_plot', 'children')])
@@ -114,7 +114,7 @@ def plot_graph(data, title, x_title, y_title, date, template='seaborn', end_date
     fig = go.Figure()
     if not end_date:
         end_date = data.index[-1]
-        if isinstance(end_date,np.integer):
+        if isinstance(end_date, np.integer):
             end_date = end_date + 1
         else:
             end_date = end_date + timedelta(days=1)
