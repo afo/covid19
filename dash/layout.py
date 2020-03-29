@@ -6,7 +6,7 @@ from extract_data import get_data
 
 
 def generate_layout():
-    layout = html.Div(children=[
+    layout = html.Div(className='container', children=[
         html.Div(className="app-header",
                  children=[html.Div("COVID19 Nordic Analysis", className="app-header--title")]),
         dcc.Tabs(children=[
@@ -16,8 +16,6 @@ def generate_layout():
                 dcc.Graph(id="deaths_plot")
             ]),
             dcc.Tab(label="Map Preliminary", id="Tab 2", children=[
-                html.Div("Subheader", className="app-subheader"),
-                checkboxes("2")
             ])
         ]),
         html.Div(id="data", style={'display': 'none'}, children=get_data())
