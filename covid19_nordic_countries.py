@@ -127,7 +127,7 @@ for col in df_deaths.columns:
 # 
 # ## Deaths over time
 
-# In[15]:
+# In[19]:
 
 
 import plotly.graph_objects as go
@@ -140,14 +140,17 @@ fig = go.Figure()
 for col in df_deaths:
     fig.add_trace(go.Scatter(x=df_deaths.index, y=df_deaths[col], name=col))
 
-fig.update_layout(title_text='COVID19 Total Nordic Deaths, starting March 10 2020',hovermode = 'x',
+fig.update_layout(title_text='COVID19 Total Nordic Deaths, starting March 10 2020',
+                  xaxis_title="Date",
+                  yaxis_title="Deaths",
+                  hovermode = 'x',
                   xaxis_rangeslider_visible=True, annotations=[dict(x = 1, y = -.47, text = "Updated {}".format(str(df_deaths.tail().index[-1])[:10]), 
       showarrow = False, xref='paper', yref='paper', 
       xanchor='right', yanchor='auto', xshift=0, yshift=0, font=dict(color="red",size=12))])
 plotly.offline.plot(fig, filename='deaths.html',auto_open=False)
 
 
-# In[16]:
+# In[20]:
 
 
 fig = go.Figure()
@@ -155,14 +158,17 @@ fig = go.Figure()
 for col in df_deaths_per_mn:
     fig.add_trace(go.Scatter(x=df_deaths_per_mn.index, y=df_deaths_per_mn[col], name=col))
 
-fig.update_layout(title_text='COVID19 Total Nordic Deaths per Mn inhabitants, starting March 10 2020',hovermode = 'x',
+fig.update_layout(title_text='COVID19 Total Nordic Deaths per Mn inhabitants, starting March 10 2020',
+                  xaxis_title="Date",
+                  yaxis_title="Deaths per Mn inhabitants",
+                  hovermode = 'x',
                   xaxis_rangeslider_visible=True,annotations=[dict(x = 1, y = -.47, text = "Updated {}".format(str(df_deaths.tail().index[-1])[:10]), 
       showarrow = False, xref='paper', yref='paper', 
       xanchor='right', yanchor='auto', xshift=0, yshift=0, font=dict(color="red",size=12))])
 plotly.offline.plot(fig, filename='deaths_mn.html',auto_open=False)
 
 
-# In[17]:
+# In[21]:
 
 
 fig = go.Figure()
@@ -170,14 +176,17 @@ fig = go.Figure()
 for col in df_deaths_1:
     fig.add_trace(go.Scatter(x=df_deaths_1.index, y=df_deaths_1[col], name=col))
 
-fig.update_layout(template='plotly_white', title_text='COVID19 Total Nordic Deaths, daily data since first death',hovermode = 'x',
+fig.update_layout(template='plotly_white', title_text='COVID19 Total Nordic Deaths, daily data since first death',
+                  xaxis_title="Days since first Death",
+                  yaxis_title="Deaths",
+                  hovermode = 'x',
                   xaxis_rangeslider_visible=True,annotations=[dict(x = 1, y = -.47, text = "Updated {}".format(str(df_deaths.tail().index[-1])[:10]), 
       showarrow = False, xref='paper', yref='paper', 
       xanchor='right', yanchor='auto', xshift=0, yshift=0, font=dict(color="red",size=12))])
 plotly.offline.plot(fig, filename='deaths_1.html',auto_open=False)
 
 
-# In[18]:
+# In[22]:
 
 
 fig = go.Figure()
@@ -185,7 +194,10 @@ fig = go.Figure()
 for col in df_deaths_per_mn_1:
     fig.add_trace(go.Scatter(x=df_deaths_per_mn_1.index, y=df_deaths_per_mn_1[col], name=col))
 
-fig.update_layout(template='plotly_white', title_text='COVID19 Total Nordic Deaths per Mn inhabitants, daily data since first death', hovermode = 'x',
+fig.update_layout(template='plotly_white', title_text='COVID19 Total Nordic Deaths per Mn inhabitants, daily data since first death',
+                  xaxis_title="Days since first Death",
+                  yaxis_title="Deaths per Mn inhabitants",
+                  hovermode = 'x',
                   xaxis_rangeslider_visible=True,annotations=[dict(x = 1, y = -.47, text = "Updated {}".format(str(df_deaths.tail().index[-1])[:10]), 
       showarrow = False, xref='paper', yref='paper', 
       xanchor='right', yanchor='auto', xshift=0, yshift=0, font=dict(color="red",size=12))])
