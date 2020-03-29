@@ -56,6 +56,6 @@ def get_data():
     df_deaths_per_mn_1 = pd.DataFrame(index=df_deaths_1.index)
     for col in df_deaths.columns:
         df_deaths_per_mn_1[col] = df_deaths_1[col] / df_pop[col].values
-    obj = {'deaths': df_deaths.to_json(), 'deaths_per_mn': df_deaths_per_mn.to_json(),
-           'deaths_1': df_deaths_1.to_json(), 'deaths_per_mn_1': df_deaths_per_mn_1.to_json()}
+    obj = {'df_deaths': df_deaths.to_json(), 'df_deaths_per_mn': df_deaths_per_mn.to_json(),
+           'df_deaths_1': df_deaths_1.to_json(), 'df_deaths_per_mn_1': df_deaths_per_mn_1.to_json()}
     return json.dumps(obj)
