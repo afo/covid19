@@ -19,7 +19,7 @@ def generate_layout():
                                                dcc.DatePickerRange(
                                                    id='picked-dates')
                                                ], style={'margin': 'auto'}),
-        dcc.Graph(id="deaths_plot"),
+        html.Div(id="deaths_plot"),
         # dcc.Tab(label="Map Preliminary", id="Tab 2", children=[
         # ])
         html.Div(id="data", style={'display': 'none'}, children=get_data()),
