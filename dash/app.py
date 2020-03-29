@@ -95,5 +95,5 @@ def plot_graph(data, title, x_title, y_title, date, template='seaborn', end_date
 
 
 if __name__ == "__main__":
-    app.run_server(debug=True)
+    app.run_server()
     pass
