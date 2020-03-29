@@ -13,22 +13,11 @@ def generate_layout():
             dcc.Tab(label="Total Deaths since March 10", id="Tab 1", children=[
                 html.Div("Subheader", className="app-subheader"),
                 checkboxes("1"),
-                dcc.Graph(id="total_deaths")
+                dcc.Graph(id="deaths_plot")
             ]),
-            dcc.Tab(label="Total Deaths per Mn inhabitants since March 10", id="Tab 2", children=[
+            dcc.Tab(label="Map Preliminary", id="Tab 2", children=[
                 html.Div("Subheader", className="app-subheader"),
-                checkboxes("2"),
-                dcc.Graph(id="Deaths/mn")
-            ]),
-            dcc.Tab(label="Total Deaths, daily figures since day of first death", id="Tab 3", children=[
-                html.Div("Subheader", className="app-subheader"),
-                checkboxes("3"),
-                dcc.Graph(id="daily_deaths")
-            ]),
-            dcc.Tab(label="Total Deaths per Mn inhabitants, daily figures since day of first death", id="Tab 4", children=[
-                html.Div("Subheader", className="app-subheader"),
-                checkboxes("4"),
-                dcc.Graph("daily_deaths/mn")
+                checkboxes("2")
             ])
         ]),
         html.Div(id="data", style={'display': 'none'}, children=get_data())
@@ -37,28 +26,59 @@ def generate_layout():
 
 
 def checkboxes(tab_name):
+    plots = plot_selection(tab_name)
+    countries = country_selection(tab_name)
+    plot_div = html.Div(children=[plots])
+    country_div = html.Div(children=[countries], style={
+        'display': 'inline-block'})
+    return html.Div(children=[plot_div, country_div])
+
+
+def plot_selection(tab_name):
     options = [{
-        'label': 'Sweden',
+        'label': 'Total Deaths',
+        'value': 'df_deaths',
+    },
+        {
+        'label': 'Total Deaths per Mn',
+        'value': 'df_deaths_per_mn',
+    },
+        {
+        'label': 'Deaths since first',
+        'value': 'df_deaths_1',
+    },
+        {
+        'label': 'Deaths since first death per mn',
+        'value': 'df_deaths_per_mn_1',
+    }]
+    radio = dcc.RadioItems(id=f"which_plot{tab_name}", options=options, labelStyle={
+        'display': 'inline-block'}, value='df_deaths')
+    return radio
+
+
+def country_selection(tab_name):
+    options = [{
+        'label': '🇸🇪 Sweden',
         'value': 'Sweden'
     },
         {
-        'label': 'Finland',
+        'label': '🇫🇮 Finland',
         'value': 'Finland'
     },
         {
-        'label': 'Norway',
+        'label': '🇳🇴 Norway',
         'value': 'Norway'
     },
         {
-        'label': 'Denmark',
+        'label': '🇩🇰 Denmark',
         'value': 'Denmark'
     },
         {
-        'label': 'Iceland',
+        'label': '🇮🇸 Iceland',
         'value': 'Iceland'
     }]
-    value = ["Sweden", "Norway", "Finland", "Denmark", "Iceland"]
-    checklist = dcc.Checklist(id=f"country_selection{tab_name}",
-                              options=options, value=value, labelStyle={'display': 'inline-block'})
-    return html.Div(children=[html.Label("Which countries"), checklist], style={'margin': 'auto'})
 
+    value = ["Sweden", "Norway", "Finland", "Denmark", "Iceland"]
+    checklist = dcc.Dropdown(id=f"country_selection{tab_name}", multi=True,
+                             options=options, value=value)
+    return checklist
