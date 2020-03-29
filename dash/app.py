@@ -11,6 +11,7 @@ from dash.dependencies import Input, Output, State
 import layout
 
 app = dash.Dash()
+server = app.server
 
 app.layout = layout.generate_layout()
 
