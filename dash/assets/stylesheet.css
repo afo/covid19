@@ -172,6 +172,18 @@ a {
 a:hover {
   color: #0FA0CE; }
 
+.btn-primary {
+  color: #333;
+  background-color:rgb(226, 226, 226);
+  border-color: #888;
+  outline: 0; 
+}
+.active {
+  color: #333;
+  background-color:#999;
+  border-color: #888;
+  outline: 0; 
+}
 
 /* Buttons
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -189,7 +201,7 @@ input[type="button"] {
   font-weight: 600;
   line-height: 38px;
   letter-spacing: .1rem;
-  text-transform: uppercase;
+  text-transform: capitalize;
   text-decoration: none;
   white-space: nowrap;
   background-color: transparent;
@@ -201,15 +213,26 @@ input[type="button"] {
 button:hover,
 input[type="submit"]:hover,
 input[type="reset"]:hover,
-input[type="button"]:hover,
+input[type="button"]:hover {
+  background-color:rgb(212, 209, 209);
+}
 .button:focus,
 button:focus,
 input[type="submit"]:focus,
 input[type="reset"]:focus,
 input[type="button"]:focus {
   color: #333;
+  background-color:#999;
   border-color: #888;
   outline: 0; }
+.button:active,
+button:active,
+input[type="button"]:active {
+  color: #333;
+  background-color:#999;
+  border-color: #888;
+  outline: 0; 
+}
 .button.button-primary,
 button.button-primary,
 input[type="submit"].button-primary,
@@ -231,6 +254,7 @@ input[type="button"].button-primary:focus {
   color: #FFF;
   background-color: #1EAEDB;
   border-color: #1EAEDB; }
+
 
 
 /* Forms

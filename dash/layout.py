@@ -1,5 +1,6 @@
 import dash
 import dash_core_components as dcc
+import dash_bootstrap_components as dbc
 import dash_html_components as html
 
 from extract_data import get_data
@@ -21,40 +22,30 @@ def generate_layout():
             dcc.Tab(label="Map Preliminary", id="Tab 2", children=[
             ])
         ]),
-        html.Div(id="data", style={'display': 'none'}, children=get_data())
+        html.Div(id="data", style={'display': 'none'}, children=get_data()),
+        html.Div(id="which_plot", style={'display': 'none'})
     ])
     return layout
 
 
 def checkboxes(tab_name):
-    plots = plot_selection(tab_name)
     countries = country_selection(tab_name)
-    plot_div = html.Div(children=[plots])
     country_div = html.Div(children=[countries], style={
         'display': 'inline-block'})
-    return html.Div(children=[plot_div, country_div])
+    buttons = generate_buttons()
+    return html.Div(children=[country_div, buttons])
 
 
-def plot_selection(tab_name):
-    options = [{
-        'label': 'Total Deaths',
-        'value': 'df_deaths',
-    },
-        {
-        'label': 'Total Deaths per Mn',
-        'value': 'df_deaths_per_mn',
-    },
-        {
-        'label': 'Deaths since first',
-        'value': 'df_deaths_1',
-    },
-        {
-        'label': 'Deaths since first death per mn',
-        'value': 'df_deaths_per_mn_1',
-    }]
-    radio = dcc.RadioItems(id=f"which_plot{tab_name}", options=options, labelStyle={
-        'display': 'inline-block'}, value='df_deaths')
-    return radio
+def generate_buttons():
+    deaths = dbc.Button('Deaths', id="df_deaths",
+                        color="primary")
+    deaths_mn = dbc.Button(
+        'Deaths per Mn', id="df_deaths_per_mn", color="primary",)
+    deaths_1 = dbc.Button('Deaths since first',
+                          id="df_deaths_1", color="primary", )
+    deaths_mn_1 = dbc.Button('Deaths per Mn since first', id="df_deaths_per_mn_1",
+                             color="primary", )
+    return html.Div(children=[deaths, deaths_mn, deaths_1, deaths_mn_1])
 
 
 def country_selection(tab_name):
