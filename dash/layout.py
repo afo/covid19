@@ -8,8 +8,6 @@ from extract_data import get_data
 
 def generate_layout():
     layout = html.Div(className='container', children=[
-        html.Div(className="app-header",
-                 children=[html.Div("COVID19 in the Nordics", className="app-header--title")]),
         html.Div("Select plot", className="app-subheader"),
         generate_buttons(),
         html.Label("Countries", style={'font-weight': 'bold'}),
