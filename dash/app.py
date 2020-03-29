@@ -11,7 +11,7 @@ import numpy as np
 
 import layout
 
-app = dash.Dash()
+app = dash.Dash(__name__)
 server = app.server
 
 app.layout = layout.generate_layout()
