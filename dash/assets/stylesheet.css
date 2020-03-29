@@ -16,7 +16,7 @@
 - Media Queries
 */
 
-/* PLotly.js 
+/* PLotly.js
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
 /* plotly.js's modebar's z-index is 1001 by default
  * https://github.com/plotly/plotly.js/blob/7e4d8ab164258f6bd48be56589dacd9bdd7fded2/src/css/_modebar.scss#L5
@@ -166,7 +166,7 @@ blockquote {
 /* Links
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
 a {
-  color: #1EAEDB; 
+  color: #1EAEDB;
   text-decoration: underline;
   cursor: pointer;}
 a:hover {
@@ -176,13 +176,13 @@ a:hover {
   color: #333;
   background-color:rgb(226, 226, 226);
   border-color: #888;
-  outline: 0; 
+  outline: 0;
 }
 .active {
-  color: #333;
-  background-color:#999;
-  border-color: #888;
-  outline: 0; 
+  color: white;
+  background-color:darkgreen;
+  border-color: black;
+  outline: 0;
 }
 
 /* Buttons
@@ -214,24 +214,24 @@ button:hover,
 input[type="submit"]:hover,
 input[type="reset"]:hover,
 input[type="button"]:hover {
-  background-color:rgb(212, 209, 209);
+  background-color:#4CAF50;
 }
 .button:focus,
 button:focus,
 input[type="submit"]:focus,
 input[type="reset"]:focus,
 input[type="button"]:focus {
-  color: #333;
-  background-color:#999;
+  color: white;
+  background-color:#4CAF50;
   border-color: #888;
   outline: 0; }
 .button:active,
 button:active,
 input[type="button"]:active {
-  color: #333;
+  color: white;
   background-color:#999;
   border-color: #888;
-  outline: 0; 
+  outline: 0;
 }
 .button.button-primary,
 button.button-primary,
@@ -274,7 +274,7 @@ select {
   border: 1px solid #D1D1D1;
   border-radius: 4px;
   box-shadow: none;
-  box-sizing: border-box; 
+  box-sizing: border-box;
   font-family: inherit;
   font-size: inherit; /*https://stackoverflow.com/questions/6080413/why-doesnt-input-inherit-the-font-from-body*/}
 /* Removes awkward default styles on some inputs for iOS */
