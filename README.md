@@ -1,2 +1,2 @@
-# Github Page repo for Learn2Launch Blockchain Spring 2019
+# Github Page repo for COVID19 Nordic Analysis
 
