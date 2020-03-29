@@ -19,4 +19,4 @@ The plots are updated daily at 5AM CET (5hr date lag).
 ### Data Sources
 
 * COVID19 death data: [https://github.com/CSSEGISandData/COVID-19](https://github.com/CSSEGISandData/COVID-19)
-* Population data: [https://en.wikipedia.org/wiki/List_of_countries_by_population_(United_Nations)](https://en.wikipedia.org/wiki/List_of_countries_by_population_(United_Nations))
+* Population data (July 1st 2019): [https://en.wikipedia.org/wiki/List_of_countries_by_population_(United_Nations)](https://en.wikipedia.org/wiki/List_of_countries_by_population_(United_Nations))
