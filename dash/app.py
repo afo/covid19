@@ -125,9 +125,9 @@ def plot_graph(data, title, x_title, y_title, date, template='seaborn', end_date
                       xaxis_title=x_title, xaxis=dict(tickmode='linear'), xaxis_range=[data.index[0], end_date],
                       yaxis_title=y_title,
                       hovermode='x',
-                      xaxis_rangeslider_visible=True, annotations=[dict(x=1, y=0, text="Updated {}".format(str(date)[:10] + ' 03:00 CET'),
-                                                                        showarrow=False, xref='paper', yref='paper',
-                                                                        xanchor='right', yanchor='bottom', xshift=0, yshift=0, font=dict(color="red", size=8.5))])
+                      xaxis_rangeslider_visible=False, annotations=[dict(x=1, y=0, text="Updated {}".format(str(date)[:10] + ' 03:00 CET'),
+                                                                         showarrow=False, xref='paper', yref='paper',
+                                                                         xanchor='right', yanchor='bottom', xshift=0, yshift=0, font=dict(color="red", size=8.5))])
     return fig
 
 
