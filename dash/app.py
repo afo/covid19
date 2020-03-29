@@ -1,13 +1,14 @@
 import dash
+from dash.dependencies import Input, Output, State
+import dash_bootstrap_components as dbc
 import dash_core_components as dcc
 import dash_html_components as html
-import dash_bootstrap_components as dbc
+from datetime import datetime, timedelta
+import json
+import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
-import json
-from datetime import datetime, timedelta
-from dash.dependencies import Input, Output, State
-import numpy as np
+
 
 import layout
 
@@ -31,7 +32,7 @@ y_axis_labels = {'df_deaths': 'Deaths',
                  'df_deaths_per_mn_1': 'Deaths per Mn inhabitants'}
 
 
-@app.callback(Output('deaths_plot', 'figure'),
+@app.callback(Output('deaths_plot', 'children'),
               [Input('country_selection', 'value'),
                Input('which_plot', 'children'),
                Input('picked-dates', 'start_date'),
@@ -39,7 +40,7 @@ y_axis_labels = {'df_deaths': 'Deaths',
               [State('data', 'children')])
 def update_total_deaths(countries, which_plot_json, start_date, end_date, json_obj):
     if not json_obj or not countries or not start_date or not end_date:
-        return go.Figure()
+        return html.Div()
     which_plot = json.loads(which_plot_json)['button_pressed']
     obj = json.loads(json_obj)
     data = pd.read_json(obj[which_plot])
@@ -55,7 +56,7 @@ def update_total_deaths(countries, which_plot_json, start_date, end_date, json_o
     fig = plot_graph(data, title, x_title, y_title,
                      date, template="plotly_white")
     fig.update_layout(height=600)
-    return fig
+    return dcc.Graph(id="Plot", figure=fig)
 
 
 @app.callback(Output('which_plot', 'children'),
