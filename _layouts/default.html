@@ -18,10 +18,11 @@
       {% endif %}
     </section>
 
+    {% raw %}
+    <iframe frameborder="no" border="0" style="position:relative; left:0; right:0; width:100%; height:100%; border:none; margin:0; padding:0;" src="https://covid19-nordic.herokuapp.com/"></iframe>
+          {% endraw %}
+
     <section class="main-content">
-      {% raw %}
-<iframe frameborder="no" border="0" style="position:fixed; left:0; right:0; width:100%; height:100%; border:none; margin:0; padding:0;" src="https://covid19-nordic.herokuapp.com/"></iframe>
-      {% endraw %}
       {{ content }}
 
       <footer class="site-footer">
