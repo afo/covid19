@@ -63,7 +63,7 @@ def button_pressed(db, dbmn, db1, dbmn1):
     ctx = dash.callback_context
     if not ctx.triggered:
         button_id = 'df_deaths'
-    elif not db or not dbm or not db1 or not dbmn1:
+    elif not db and not dbmn and not db1 and not dbmn1:
         button_id = 'df_deaths'
     else:
         button_id = ctx.triggered[0]['prop_id'].split('.')[0]
