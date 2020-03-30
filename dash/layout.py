@@ -37,13 +37,13 @@ def checkboxes(tab_name):
 
 
 def generate_buttons():
-    deaths = dbc.Button('Deaths', id="df_deaths",
+    deaths = dbc.Button('1. Deaths', id="df_deaths",
                         color="primary")
     deaths_mn = dbc.Button(
-        'Deaths per Mn', id="df_deaths_per_mn", color="primary",)
-    deaths_1 = dbc.Button('Deaths since first',
+        '2. Deaths per Mn', id="df_deaths_per_mn", color="primary",)
+    deaths_1 = dbc.Button('3. Deaths since first',
                           id="df_deaths_1", color="primary", )
-    deaths_mn_1 = dbc.Button('Deaths per Mn since first', id="df_deaths_per_mn_1",
+    deaths_mn_1 = dbc.Button('4. Deaths per Mn since first', id="df_deaths_per_mn_1",
                              color="primary", )
     return html.Div(children=[deaths, deaths_mn, deaths_1, deaths_mn_1])
 
