@@ -3,7 +3,7 @@
 
 # # Covid19 Analysis for Nordic Countries
 
-# In[1]:
+# In[48]:
 
 
 import pandas as pd
@@ -13,20 +13,20 @@ import numpy as np
 #%matplotlib inline
 
 
-# In[2]:
+# In[49]:
 
 
 df = pd.read_json('https://pomber.github.io/covid19/timeseries.json')[['Sweden','Denmark','Norway','Finland','Iceland']]
 
 
-# In[3]:
+# In[50]:
 
 
 n_rows = df.shape[0]
 df['Sweden'][0]
 
 
-# In[4]:
+# In[51]:
 
 
 # extract dates
@@ -35,7 +35,7 @@ for i in range(n_rows):
     dates.append(df['Sweden'][i]['date'])
 
 
-# In[5]:
+# In[52]:
 
 
 df['Date'] = dates
@@ -43,13 +43,13 @@ df['Date'] = pd.to_datetime(df['Date'])
 df = df.set_index('Date')
 
 
-# In[6]:
+# In[53]:
 
 
 df.tail()
 
 
-# In[7]:
+# In[54]:
 
 
 df_deaths = pd.DataFrame(index=df.index)
@@ -57,7 +57,7 @@ for col in df.columns:
     df_deaths[col] = [c.get('deaths') for c in df[col]]
 
 
-# In[8]:
+# In[55]:
 
 
 # Start from March 10 before first deaths
@@ -67,7 +67,7 @@ df_deaths.loc['2020-03-15','Iceland'] = 0
 df_deaths.loc['2020-03-20','Iceland'] = 1
 
 
-# In[9]:
+# In[56]:
 
 
 # population data from Wikipedia
@@ -80,13 +80,13 @@ df_pop = df_pop.pivot_table(columns='Country or area',values='Population(1 July 
 df_pop = df_pop / 1000000
 
 
-# In[10]:
+# In[57]:
 
 
 df_pop['Sweden']
 
 
-# In[11]:
+# In[58]:
 
 
 df_deaths_per_mn = pd.DataFrame(index=df_deaths.index)
@@ -94,7 +94,7 @@ for col in df_deaths.columns:
     df_deaths_per_mn[col] = df_deaths[col] / df_pop[col].values
 
 
-# In[12]:
+# In[59]:
 
 
 df_deaths_per_mn
@@ -102,7 +102,7 @@ df_deaths_per_mn
 
 # # Trend from first death
 
-# In[13]:
+# In[60]:
 
 
 df_deaths_1 = df_deaths[df_deaths != 0]
@@ -114,7 +114,7 @@ df_deaths_1 = df_deaths_1.apply(lambda x: pd.Series(x.dropna().values))
 df_deaths_1 = pd.concat([pd.DataFrame(np.zeros((1,df_deaths_1.shape[1])),columns=df_deaths_1.columns), df_deaths_1], axis=0,ignore_index=True)
 
 
-# In[14]:
+# In[61]:
 
 
 # deaths per mn inhabitants since first death
@@ -127,81 +127,36 @@ for col in df_deaths.columns:
 # 
 # ## Deaths over time
 
-# In[19]:
+# In[69]:
 
+
+from datetime import datetime, timedelta
 
 import plotly.graph_objects as go
-import pandas as pd
 import plotly
 
+end_date = df_deaths.tail().index[-1] + timedelta(days=1)
+date = str(end_date)[:10] + ' 03:00 CET'
 
-fig = go.Figure()
+def plot_graph(data, title, x_title, y_title, file_name, date, template='seaborn',end_date=end_date):
+    fig = go.Figure()
 
-for col in df_deaths:
-    fig.add_trace(go.Scatter(x=df_deaths.index, y=df_deaths[col], name=col))
+    for col in data:
+        fig.add_trace(go.Scatter(x=data.index, y=data[col], name=col))
 
-fig.update_layout(title_text='COVID19 Total Nordic Deaths, starting March 10 2020',
-                  xaxis_title="Date",
-                  yaxis_title="Deaths",
+    fig.update_layout(template=template, title_text=title,
+                  xaxis_title=x_title, xaxis=dict(tickmode='linear'), xaxis_range=[data.index[0], end_date],
+                  yaxis_title=y_title,
                   hovermode = 'x',
-                  xaxis_rangeslider_visible=True, annotations=[dict(x = 1, y = -.47, text = "Updated {}".format(str(df_deaths.tail().index[-1])[:10]), 
+                  xaxis_rangeslider_visible=True, annotations=[dict(x = 1, y = 0, text = "Updated {}".format(date), 
       showarrow = False, xref='paper', yref='paper', 
-      xanchor='right', yanchor='auto', xshift=0, yshift=0, font=dict(color="red",size=12))])
-plotly.offline.plot(fig, filename='deaths.html',auto_open=False)
-
-
-# In[20]:
-
-
-fig = go.Figure()
-
-for col in df_deaths_per_mn:
-    fig.add_trace(go.Scatter(x=df_deaths_per_mn.index, y=df_deaths_per_mn[col], name=col))
-
-fig.update_layout(title_text='COVID19 Total Nordic Deaths per Mn inhabitants, starting March 10 2020',
-                  xaxis_title="Date",
-                  yaxis_title="Deaths per Mn inhabitants",
-                  hovermode = 'x',
-                  xaxis_rangeslider_visible=True,annotations=[dict(x = 1, y = -.47, text = "Updated {}".format(str(df_deaths.tail().index[-1])[:10]), 
-      showarrow = False, xref='paper', yref='paper', 
-      xanchor='right', yanchor='auto', xshift=0, yshift=0, font=dict(color="red",size=12))])
-plotly.offline.plot(fig, filename='deaths_mn.html',auto_open=False)
-
-
-# In[21]:
-
-
-fig = go.Figure()
-
-for col in df_deaths_1:
-    fig.add_trace(go.Scatter(x=df_deaths_1.index, y=df_deaths_1[col], name=col))
-
-fig.update_layout(template='plotly_white', title_text='COVID19 Total Nordic Deaths, daily data since first death',
-                  xaxis_title="Days since first Death",
-                  yaxis_title="Deaths",
-                  hovermode = 'x',
-                  xaxis_rangeslider_visible=True,annotations=[dict(x = 1, y = -.47, text = "Updated {}".format(str(df_deaths.tail().index[-1])[:10]), 
-      showarrow = False, xref='paper', yref='paper', 
-      xanchor='right', yanchor='auto', xshift=0, yshift=0, font=dict(color="red",size=12))])
-plotly.offline.plot(fig, filename='deaths_1.html',auto_open=False)
-
-
-# In[22]:
-
-
-fig = go.Figure()
-
-for col in df_deaths_per_mn_1:
-    fig.add_trace(go.Scatter(x=df_deaths_per_mn_1.index, y=df_deaths_per_mn_1[col], name=col))
-
-fig.update_layout(template='plotly_white', title_text='COVID19 Total Nordic Deaths per Mn inhabitants, daily data since first death',
-                  xaxis_title="Days since first Death",
-                  yaxis_title="Deaths per Mn inhabitants",
-                  hovermode = 'x',
-                  xaxis_rangeslider_visible=True,annotations=[dict(x = 1, y = -.47, text = "Updated {}".format(str(df_deaths.tail().index[-1])[:10]), 
-      showarrow = False, xref='paper', yref='paper', 
-      xanchor='right', yanchor='auto', xshift=0, yshift=0, font=dict(color="red",size=12))])
-plotly.offline.plot(fig, filename='deaths_mn_1.html',auto_open=False)
+      xanchor='right', yanchor='bottom', xshift=0, yshift=0, font=dict(color="red",size=8.5))])
+    plotly.offline.plot(fig, filename=file_name,auto_open=False)
+    
+plot_graph(df_deaths, 'COVID19 Total Nordic Deaths, starting March 10 2020', "Date", "Deaths", 'deaths.html', date)
+plot_graph(df_deaths_per_mn, 'COVID19 Total Nordic Deaths per Mn inhabitants, starting March 10 2020', "Date", "Deaths per Mn inhabitants", 'deaths_mn.html',date)
+plot_graph(df_deaths_1, 'COVID19 Total Nordic Deaths, daily data since first death', "Days since first Death", "Deaths", 'deaths_1.html', date, template='plotly_white', end_date =df_deaths_1.index[-1]+1)
+plot_graph(df_deaths_per_mn_1, 'COVID19 Total Nordic Deaths per Mn inhabitants, daily data since first death', "Days since first Death", "Deaths per Mn inhabitants", 'deaths_mn_1.html', date, template='plotly_white', end_date =df_deaths_1.index[-1]+1)
 
 
 # In[ ]:
