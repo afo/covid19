@@ -77,6 +77,6 @@ def country_selection():
 
 
 def generate_scale_buttons():
-    linear_button = dbc.Button("Linear", id="linear-button", color="Primary")
-    log_button = dbc.Button("Log", id="log-button", color="primary")
+    linear_button = dbc.Button("Linear", id="linear-button", color="Primary", size="sm")
+    log_button = dbc.Button("Log", id="log-button", color="primary", size="sm")
     return html.Div([linear_button, log_button])
