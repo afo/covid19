@@ -36,13 +36,15 @@ y_axis_labels = {'df_deaths': 'Deaths',
               [Input('country_selection', 'value'),
                Input('which_plot', 'children'),
                Input('picked-dates', 'start_date'),
-               Input('picked-dates', 'end_date')],
+               Input('picked-dates', 'end_date'),
+               Input('which_scale', 'children')],
               [State('data', 'children')])
-def update_total_deaths(countries, which_plot_json, start_date, end_date, json_obj):
+def update_total_deaths(countries, which_plot_json, start_date, end_date, scale_json, json_obj):
     if not json_obj or not countries or not start_date or not end_date:
         return html.Div()
     which_plot = json.loads(which_plot_json)['button_pressed']
     obj = json.loads(json_obj)
+    scale = json.loads(scale_json)['button']
     data = pd.read_json(obj[which_plot])
     date = datetime.fromtimestamp(obj['date'])
     if which_plot in ['df_deaths', 'df_deaths_per_mn']:
@@ -54,7 +56,7 @@ def update_total_deaths(countries, which_plot_json, start_date, end_date, json_o
     data = data[countries]
 
     fig = plot_graph(data, title, x_title, y_title,
-                     date, template="plotly_white")
+                     date, scale, template="plotly_white")
     fig.update_layout(height=600)
     return dcc.Graph(id="Plot", figure=fig)
 
@@ -111,7 +113,38 @@ def update_active_button(d, dpm, d1, dpm1):
     return updating
 
 
-def plot_graph(data, title, x_title, y_title, date, template='seaborn', end_date=None):
+@app.callback([Output("linear-button", 'active'),
+               Output("log-button", 'active')],
+              [Input("linear-button", 'n_clicks'),
+               Input("log-button", 'n_clicks')])
+def update_scale_button(linear, log):
+    buttons = ['linear-button', 'log-button']
+    ctx = dash.callback_context
+    if not ctx.triggered:
+        button_id = 'linear-button'
+    else:
+        button_id = ctx.triggered[0]['prop_id'].split('.')[0]
+    if not linear and not log:
+        button_id = 'linear-button'
+    updating = [True if item == button_id else False for item in buttons]
+    return updating
+
+
+@app.callback(Output('which_scale', 'children'),
+              [Input("linear-button", 'n_clicks'),
+               Input("log-button", 'n_clicks')])
+def update_selected_scale(linear, log):
+    ctx = dash.callback_context
+    if not ctx.triggered:
+        button_id = 'linear-button'
+    else:
+        button_id = ctx.triggered[0]['prop_id'].split('.')[0]
+    if not linear and not log:
+        button_id = 'linear-button'
+    return json.dumps({'button': button_id.split('-')[0]})
+
+
+def plot_graph(data, title, x_title, y_title, date, scale='linear', template='seaborn', end_date=None):
     fig = go.Figure()
     if not end_date:
         end_date = data.index[-1]
@@ -122,12 +155,13 @@ def plot_graph(data, title, x_title, y_title, date, template='seaborn', end_date
     for col in data:
         fig.add_trace(go.Scatter(x=data.index, y=data[col], name=col))
     fig.update_layout(template=template, title_text=title,
-                      xaxis_title=x_title, xaxis=dict(tickmode='linear', fixedrange= True), xaxis_range=[data.index[0], end_date],
+                      xaxis_title=x_title, xaxis=dict(tickmode='linear', fixedrange=True), xaxis_range=[data.index[0], end_date],
                       yaxis_title=y_title, yaxis=dict(fixedrange=True),
                       hovermode='x',
                       xaxis_rangeslider_visible=False, annotations=[dict(x=1, y=0, text="Updated {}".format(str(date)[:10] + ' 03:00 CET'),
                                                                          showarrow=False, xref='paper', yref='paper',
                                                                          xanchor='right', yanchor='bottom', xshift=0, yshift=0, font=dict(color="red", size=8.5))])
+    fig.update_layout(yaxis_type=scale)
     return fig
 
 
