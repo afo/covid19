@@ -122,7 +122,7 @@ def plot_graph(data, title, x_title, y_title, date, template='seaborn', end_date
     for col in data:
         fig.add_trace(go.Scatter(x=data.index, y=data[col], name=col))
     fig.update_layout(template=template, title_text=title,
-                      xaxis_title=x_title, xaxis=dict(tickmode='linear'), xaxis_range=[data.index[0], end_date],
+                      xaxis_title=x_title, xaxis=dict(tickmode='linear', fixedrange=True), xaxis_range=[data.index[0], end_date],
                       yaxis_title=y_title,
                       hovermode='x',
                       xaxis_rangeslider_visible=False, annotations=[dict(x=1, y=0, text="Updated {}".format(str(date)[:10] + ' 03:00 CET'),
