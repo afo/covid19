@@ -180,7 +180,7 @@ a:hover {
 }
 .active {
   color: white;
-  background-color:darkgreen;
+  background-color:#4CAF50;
   border-color: black;
   outline: 0;
 }
@@ -214,7 +214,7 @@ button:hover,
 input[type="submit"]:hover,
 input[type="reset"]:hover,
 input[type="button"]:hover {
-  background-color:#4CAF50;
+  background-color:lightgreen;
 }
 .button:focus,
 button:focus,
@@ -222,7 +222,7 @@ input[type="submit"]:focus,
 input[type="reset"]:focus,
 input[type="button"]:focus {
   color: white;
-  background-color:#4CAF50;
+  background-color:lightgreen;
   border-color: #888;
   outline: 0; }
 .button:active,
