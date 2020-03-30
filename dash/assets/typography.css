@@ -8,3 +8,11 @@ label {
 h1, h2, h3, h4, h5, h6 {
     color: grey
 }
+
+text[style*="font-size: 9px"] {
+    font-size: 0 !important;
+}
+.br-2 {
+   display: block;
+   margin: 4% 0;
+}
