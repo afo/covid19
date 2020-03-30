@@ -18,8 +18,10 @@ def generate_layout():
                                                    id='picked-dates')
                                                ], style={'margin': 'auto'}),
         html.Div(id="deaths_plot"),
+        generate_scale_buttons(),
         # dcc.Tab(label="Map Preliminary", id="Tab 2", children=[
         # ])
+        html.Div(id="which_scale", style={'display': 'none'}),
         html.Div(id="data", style={'display': 'none'}, children=get_data()),
         html.Div(id="which_plot", style={'display': 'none'})
     ])
@@ -72,3 +74,9 @@ def country_selection():
     checklist = dcc.Dropdown(id=f"country_selection", multi=True,
                              options=options, value=value)
     return html.Div([checklist], style={'display': 'inline-block'})
+
+
+def generate_scale_buttons():
+    linear_button = dbc.Button("Linear", id="linear-button", color="Primary")
+    log_button = dbc.Button("Log", id="log-button", color="primary")
+    return html.Div([linear_button, log_button])
