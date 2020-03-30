@@ -10,18 +10,21 @@ def generate_layout():
     layout = html.Div(className='container', children=[
         html.Div("Select plot", className="app-subheader"),
         generate_buttons(),
+        html.Hr(),
         html.Label("Countries", style={'font-weight': 'bold'}),
+        html.Br(),
         country_selection(),
         html.Br(),
-        html.Div(id="visible_dates", children=[html.Label("Select date interval", style={'font-weight': 'bold'}),
-                                               dcc.DatePickerRange(
-                                                   id='picked-dates')
-                                               ], style={'margin': 'auto'}),
-        html.Div(id="deaths_plot"),
-        generate_scale_buttons(),
-        # dcc.Tab(label="Map Preliminary", id="Tab 2", children=[
-        # ])
-        html.Div(id="which_scale", style={'display': 'none'}),
+        html.Div([html.Div(id="visible_dates", children=[html.Label("Select date interval", style={'font-weight': 'bold'}),
+                                                         html.Br(),
+                                                         dcc.DatePickerRange(
+            id='picked-dates')
+        ], className="five columns", style={'display': 'inline-block'}),
+            html.Div([html.Br(), html.Br(className="br-2"), dbc.Checklist(
+                options=[{'label': 'Log Scale', 'value': 'on'}], value=[], id="log-scale", switch=True)], className="three columns")
+        ], className="twelve columns"),
+        html.Div([html.Div(id="deaths_plot")], className="twelve columns"),
+
         html.Div(id="data", style={'display': 'none'}, children=get_data()),
         html.Div(id="which_plot", style={'display': 'none'})
     ])
@@ -37,14 +40,13 @@ def checkboxes(tab_name):
 
 
 def generate_buttons():
-    deaths = dbc.Button('Deaths', id="df_deaths",
-                        color="primary")
+    deaths = dbc.Button('Deaths', id="df_deaths")
     deaths_mn = dbc.Button(
-        'Deaths per Mn', id="df_deaths_per_mn", color="primary",)
+        'Deaths per Mn', id="df_deaths_per_mn")
     deaths_1 = dbc.Button('Deaths since first',
-                          id="df_deaths_1", color="primary", )
-    deaths_mn_1 = dbc.Button('Deaths per Mn since first', id="df_deaths_per_mn_1",
-                             color="primary", )
+                          id="df_deaths_1")
+    deaths_mn_1 = dbc.Button(
+        'Deaths per Mn since first', id="df_deaths_per_mn_1")
     return html.Div(children=[deaths, deaths_mn, deaths_1, deaths_mn_1])
 
 
