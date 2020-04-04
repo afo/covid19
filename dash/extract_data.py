@@ -1,7 +1,9 @@
+import requests
 from datetime import datetime, timedelta
 import pandas as pd
 import numpy as np
 import json
+import pickle
 
 
 def get_data():
@@ -20,15 +22,26 @@ def get_data():
     df['Date'] = pd.to_datetime(df['Date'])
     df = df.set_index('Date')
 
+#    df = df.rename(columns={'US':'United States','Korea, South':'South Korea', 'Czechia':'Czech Republic'})
+
     df_deaths = pd.DataFrame(index=df.index)
+
     for col in df.columns:
         df_deaths[col] = [c.get('deaths') for c in df[col]]
 
+    latest_data = death_update(countries)
+    df_deaths = pd.concat([df_deaths, latest_data])
     # Start from March 10 before first deaths
-    df_deaths = df_deaths['2020-03-10':]
+    df_deaths = df_deaths[datetime(2020, 3, 10):]
     # Fix faulty Iceland data
-    df_deaths.loc['2020-03-15', 'Iceland'] = 0
-    df_deaths.loc['2020-03-20', 'Iceland'] = 1
+    df_deaths.loc[datetime(2020, 3, 15, 0, 0, 0), 'Iceland'] = 0
+    df_deaths.loc[datetime(2020, 3, 20, 0, 0, 0,), 'Iceland'] = 1
+    df_confirmed = pd.DataFrame(index=df.index)
+    for col in df.columns:
+        df_confirmed[col] = [c.get('confirmed') for c in df[col]]
+    latest_data = confirm_update(countries)
+
+    df_confirmed = pd.concat([df_confirmed, latest_data])
 
     df_pop = pd.read_html(
         'https://en.wikipedia.org/wiki/List_of_countries_by_population_(United_Nations)')[3]
@@ -42,24 +55,75 @@ def get_data():
     df_pop = df_pop / 1000000
     df_deaths_per_mn = pd.DataFrame(index=df_deaths.index)
 
+    df_confirmed_per_mn = pd.DataFrame(index=df_confirmed.index)
+
     for col in df_deaths.columns:
         df_deaths_per_mn[col] = df_deaths[col] / df_pop[col].values
 
-    df_deaths_1 = df_deaths[df_deaths != 0]
-    # Remove all dates with zero deaths
-    df_deaths_1 = df_deaths_1.apply(lambda x: pd.Series(x.dropna().values))
+    for col in df_confirmed.columns:
+        df_confirmed_per_mn[col] = df_confirmed[col] / df_pop[col].values
 
-    # Add zero to first day
-    df_deaths_1 = pd.concat([pd.DataFrame(np.zeros((1, df_deaths_1.shape[1])),
-                                          columns=df_deaths_1.columns), df_deaths_1], axis=0, ignore_index=True)
+    # Fix later on so that each item is stored inside country_df directly
+    obj = {'df_deaths': df_deaths, 'df_deaths_per_mn': df_deaths_per_mn}
+    country_dict = {}
+    for country in countries:
+        country_df = pd.DataFrame()
+        for k, df in obj.items():
+            if '1' in k:
+                continue
+            else:
+                country_df[k] = df[country]
+        country_df['Cases'] = df_confirmed[country]
+        country_df['Cases_per_mn'] = df_confirmed_per_mn[country]
+        country_dict[country] = country_df
 
-    # deaths per mn inhabitants since first death
-    df_deaths_per_mn_1 = pd.DataFrame(index=df_deaths_1.index)
-    for col in df_deaths.columns:
-        df_deaths_per_mn_1[col] = df_deaths_1[col] / df_pop[col].values
+    with open('dates.pkl', 'wb') as f:
+        dates = {'death_dates': df_deaths.index,
+                 'confirmed_dates': df_confirmed.index}
+        pickle.dump(dates, f)
+    with open('countries.pkl', 'wb') as f:
+        pickle.dump(country_dict, f)
 
-    date = df_deaths.index[-1].to_pydatetime()+timedelta(days=1)
-    obj = {'df_deaths': df_deaths.to_json(), 'df_deaths_per_mn': df_deaths_per_mn.to_json(),
-           'df_deaths_1': df_deaths_1.to_json(), 'df_deaths_per_mn_1': df_deaths_per_mn_1.to_json(),
-           'date': datetime.timestamp(date)}
-    return json.dumps(obj)
+
+def death_update(country=None):
+    url = 'https://www.worldometers.info/coronavirus/'
+    header = {
+        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.75 Safari/537.36",
+        "X-Requested-With": "XMLHttpRequest"
+    }
+    r = requests.get(url, headers=header)
+    dfs = pd.read_html(r.text)
+    df = dfs[0]
+    df = df[['Country,Other', 'TotalDeaths']]
+    df.columns = ['Date', 'Deaths']
+    df = df.transpose()
+    df.columns = df.loc['Date']
+    df = df.drop('Date')
+    df.index = [datetime.now().date()]
+    df.set_index
+    if country:
+        return(df[country])
+    else:
+        return df
+
+
+def confirm_update(country=None):
+    url = 'https://www.worldometers.info/coronavirus/'
+    header = {
+        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.75 Safari/537.36",
+        "X-Requested-With": "XMLHttpRequest"
+    }
+    r = requests.get(url, headers=header)
+    dfs = pd.read_html(r.text)
+    df = dfs[0]
+    df = df[['Country,Other', 'TotalCases']]
+    df.columns = ['Date', 'Confirmed']
+    df = df.transpose()
+    df.columns = df.loc['Date']
+    df = df.drop('Date')
+    df.index = [datetime.now().date()]
+    df.set_index
+    if country:
+        return(df[country])
+    else:
+        return df

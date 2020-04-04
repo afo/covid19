@@ -8,7 +8,7 @@ import json
 import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
-
+import pickle
 
 import layout
 
@@ -20,6 +20,13 @@ with open("check.txt", 'w') as f:
 server = app.server
 
 app.layout = layout.generate_layout()
+
+
+def load_data():
+    with open('countries.pkl', 'rb') as f:
+        countries_dict = pickle.load(f)
+    return countries_dict
+
 
 dfs = ['df_deaths', 'df_deaths_per_mn', 'df_deaths_1', 'df_deaths_per_mn_1']
 titles = {'df_deaths': 'COVID19 Total Nordic Deaths, starting March 10 2020',
@@ -41,16 +48,26 @@ y_axis_labels = {'df_deaths': 'Deaths',
                Input('which_plot', 'children'),
                Input('picked-dates', 'start_date'),
                Input('picked-dates', 'end_date'),
-               Input('log-scale', 'value')],
-              [State('data', 'children')])
-def update_total_deaths(countries, which_plot_json, start_date, end_date, scale, json_obj):
-    if not json_obj or not countries or not start_date or not end_date:
+               Input('log-scale', 'value')])
+def update_total_deaths(countries, which_plot_json, start_date, end_date, scale):
+    if not countries or not start_date or not end_date:
         return html.Div()
     which_plot = json.loads(which_plot_json)['button_pressed']
-    obj = json.loads(json_obj)
     scale = next((s for s in scale), None)
-    data = pd.read_json(obj[which_plot])
-    date = datetime.fromtimestamp(obj['date'])
+    country_dicts = load_data()
+    data = pd.DataFrame()
+    for country in countries:
+        if '1' in which_plot:
+            country_data = country_dicts[country][which_plot[:-2]]
+            country_data = country_data[country_data > 0]
+            country_data.index = range(len(country_data))
+            # data[country] = country_dicts[country][]
+        else:
+            country_data = country_dicts[country][which_plot]
+        data[country] = country_data
+    date = data[countries[0]].index[-1]
+    start_date = pd.to_datetime(start_date)
+    end_date = pd.to_datetime(end_date)
     if which_plot in ['df_deaths', 'df_deaths_per_mn']:
         data = data[(data.index >= start_date)
                     & (data.index <= end_date)]
@@ -87,10 +104,10 @@ def button_pressed(db, dbmn, db1, dbmn1):
 def get_date_picker(json_obj):
     if not json:
         return None
-
-    df = pd.read_json(json.loads(json_obj)['df_deaths'])
-    start_date = df.index[0]
-    end_date = df.index[-1]
+    with open('dates.pkl', 'rb') as f:
+        dates = pickle.load(f)['death_dates']
+    start_date = dates[0]
+    end_date = dates[-1]
     return start_date, end_date + timedelta(days=1), start_date, end_date
 
 @app.callback(Output('visible_dates', 'style'),
@@ -102,6 +119,28 @@ def visible_date_picker(plot_json):
     else:
         return {'display': 'inline-block'}
 
+@app.callback(Output('Map', 'children'),
+              [Input('date-slider', 'value')])
+def plot_map(date_index):
+    date = get_date_from_index(date_index)
+
+    fig = go.Figure(data=go.Choropleth(
+        colorscale='greens',
+    ))
+
+    fig.update_layout(
+        title_text='Regional Data',
+        geo_scope='europe',  # limite map scope to USA
+    )
+    map_graph = dcc.Graph(id="Map", figure=fig)
+    return html.Div([map_graph])
+
+@app.callback(Output('selected-date-map', 'children'),
+              [Input('date-slider', 'value')])
+def get_selected_map_date(date_index):
+    date = get_date_from_index(date_index)
+    date_string = date.strftime("%d %b")
+    return html.Label("Date "+date_string)
 
 @app.callback([Output(f"{item}", 'active') for item in dfs],
               [Input(f"{item}", 'n_clicks') for item in dfs])
@@ -121,7 +160,7 @@ def plot_graph(data, title, x_title, y_title, date, scale='linear', template='se
     fig = go.Figure()
     if not end_date:
         end_date = data.index[-1]
-        if isinstance(end_date, np.integer):
+        if isinstance(end_date, int):
             end_date = end_date + 1
         else:
             end_date = end_date + timedelta(days=1)
@@ -139,9 +178,17 @@ def plot_graph(data, title, x_title, y_title, date, scale='linear', template='se
     return fig
 
 
+def get_date_from_index(date_index):
+    with open('dates.pkl', 'rb') as f:
+        dates = pickle.load(f)['confirmed_dates']
+    date = dates[date_index]
+    return date
+
+
 if __name__ == "__main__":
     app.run_server(debug=True)
     pass
+
 
 """@app.callback([Output("linear-button", 'active'),
                Output("log-button", 'active')],
