@@ -4,7 +4,7 @@
 
 [covid19nordics.se](covid19nordics.se) is an open source dashboard to visualize Covid-19 related data for the Nordic countries, including reported cases, deaths, mobility data, timeline of political decisions.
 
-The data is presented in dynamic graphs and maps which are easy to overview and understand even for a laidman. Time stamps for data points and events are available and can be adjusted. The information can be used to analyse the effect of political actions done by a country. Mobility data shows how travel habits have evolved during the crisis, per day and region.
+The data is presented in dynamic graphs and maps which are easy to overview and understand even for a layman. Time stamps for data points and events are available and can be adjusted. The information can be used to analyse the effect of political actions done by a country. Mobility data shows how travel habits have evolved during the crisis, per day and region.
 
 Individuals can see mobility trends, confirmed cases and deaths in their region and how it evolves over time. Based on the assumption that less mobility leads to less virus spread and deaths, this data can have a positive impact if people reduce their mobility and social interactions.
 
