@@ -1,17 +1,17 @@
 .CalendarDay__selected, .CalendarDay__selected:active, .CalendarDay__selected:hover {
-	background: #003152;
-	border: 1px double black;
+	background: #1693D7;
+	border: 1px double   rgb(221, 221, 221);
 	color: #fff;
 }
 .CalendarDay__selected_span:active, .CalendarDay__selected_span:hover {
-	background: #003262;
-	border: 1px double #003262;
-	color: #fff;
+	background: #1693D7;
+	border: 1px double #1693D7;
+	color:  rgb(170, 170, 170);
 }
 .CalendarDay__selected_span {
-	background: #013262;
-	border: 1px double black;
-	color: #fff;
+	background: #E8F4FB;
+	border: 1px double  rgb(221, 221, 221);
+	color: #1693D7;
 }
 
 
