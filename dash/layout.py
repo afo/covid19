@@ -94,7 +94,8 @@ def generate_option_buttons():
         "Confirmed Cases", active=False, id="confirmed")
     death = dbc.Button("Deaths", active=True, id="death")
     pop_button = dbc.Button("Per Million", active=False, id="per_million")
-    return [death, dropdown_mobility, dropdown_icu, dropdown_confirmed, pop_button]
+    political = dbc.Button("Political Decisions", active=False, id="political")
+    return [death, dropdown_mobility, dropdown_icu, dropdown_confirmed, pop_button, political]
 
 
 def generate_buttons():
@@ -149,7 +150,8 @@ def generate_map_buttons():
     deaths = dbc.Button("Total deaths", id="map_death")
     total_cases = dbc.Button("Total Cases", id='map_total_cases')
     iva_cases = dbc.Button("Total IVA-patients", id='map_iva_patients')
-    return [deaths, total_cases, iva_cases]
+    mobility = dbc.Button("Mobility Index", id="mobility_map")
+    return [deaths, total_cases, iva_cases, mobility]
 
 
 def country_selection():

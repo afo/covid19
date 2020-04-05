@@ -5,6 +5,7 @@ import dash_core_components as dcc
 import dash_html_components as html
 from datetime import datetime, timedelta
 import json
+import plotly.express as px
 import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
@@ -34,9 +35,11 @@ plots = {'death': 'df_deaths',
          'confirmed': 'Cases',
          'ICU': 'ICU',
          'mobility_index': 'mobility',
-         'per_million': 'million'}
+         'per_million': 'million',
+         'political': 'politics'}
 countries = ['Sweden', 'Finland', 'Denmark', 'Norway', 'Iceland']
-active_map = ["map_death", 'map_total_cases', 'map_iva_patients']
+active_map = ["map_death", 'map_total_cases',
+              'map_iva_patients', 'mobility_map']
 titles = {'df_deaths': 'COVID19 Total Nordic Deaths, starting March 10 2020',
           'df_deaths_per_mn': 'COVID19 Total Nordic Deaths per Mn inhabitants, starting March 10 2020',
           'df_deaths_1': 'COVID19 Total Nordic Deaths, daily data since first death',
@@ -50,6 +53,10 @@ y_axis_labels = {'df_deaths': 'Deaths',
                  'df_deaths_1': 'Deaths',
                  'df_deaths_per_mn_1': 'Deaths per Mn inhabitants'}
 
+legends = {'df_deaths': 'Deaths',
+           'Cases': 'Confirmed Cases',
+           'ICU': 'Intensive Care',
+           'mobility': 'Mobility ', }
 colors = {'Sweden': 'blue',
           'Denmark': 'red',
           'Norway': 'orange',
@@ -58,6 +65,8 @@ colors = {'Sweden': 'blue',
 lines = {'df_deaths': 'solid',
          'Cases': 'dash',
          'ICU': 'dashdot'}
+
+yaxis = {}
 
 pops = {'Sweden': 10.036379,
         'Denmark': 5.771876,
@@ -80,7 +89,8 @@ def get_column_to_show(children):
         if child['props']['active']:
             col = get_column_names(child['props']['id'])
             if "million" not in col:
-                cols.append(col)
+                if 'poli' not in col:
+                    cols.append(col)
 
     return cols
 
@@ -96,8 +106,9 @@ def get_column_to_show(children):
                Input('death', 'active'),
                Input('ICU', 'active'),
                Input('confirmed', 'active'),
+               Input('political', 'active'),
                ])
-def update_total_deaths(countries, which_plots, start_date, end_date, scale, mobility, per_mn, check, check1, check2):
+def update_total_deaths(countries, which_plots, start_date, end_date, scale, mobility, per_mn, check, check1, check2, political):
     if not countries or not start_date or not end_date:
         return html.Div()
     if not which_plots:
@@ -109,7 +120,6 @@ def update_total_deaths(countries, which_plots, start_date, end_date, scale, mob
     country_dicts = load_data()
     start_date = pd.to_datetime(start_date)
     end_date = pd.to_datetime(end_date)
-    print(per_mn)
     data = {}
     for country in countries:
         country_data = pd.DataFrame()
@@ -140,10 +150,10 @@ def update_total_deaths(countries, which_plots, start_date, end_date, scale, mob
         #     else:
     if mobility:
 
-        fig = plot_graph_with_mobility(data)
+        fig = plot_graph_with_mobility(data, political, per_mn)
     else:
 
-        fig = plot_graph(data, scale)
+        fig = plot_graph(data, political, per_mn, scale)
     fig.update_layout(height=600)
     return dcc.Graph(id="Plot", figure=fig)
 
@@ -185,19 +195,45 @@ def get_date_picker(json_obj):
 #     else:
 #         return {'display': 'inline-block'}
 
+
 @app.callback(Output('Map', 'children'),
-              [Input('date-slider', 'value')])
-def plot_map(date_index):
+              [Input('date-slider', 'value'),
+               Input('map_total_cases', 'active'),
+               Input('map_iva_patients', 'active'),
+               Input('map_death', 'active'),
+               Input('mobility_map', 'active')])
+def plot_map(date_index, total, iva, death, mobility):
     date = get_date_from_index(date_index)
-
-    fig = go.Figure(data=go.Choropleth(
-        colorscale='greens',
-    ))
-
-    fig.update_layout(
-        title_text='Regional Data',
-        geo_scope='europe',  # limite map scope to USA
-    )
+    column = "Deaths"
+    if total:
+        column = "Tested_Confirmed"
+    if death:
+        column = "Deaths"
+    if iva:
+        column = "ICU_Patients"
+    if mobility:
+        column = "Mobility"
+    print(column)
+    from urllib.request import urlopen
+    import json
+    import plotly
+    # Example data
+    with open('data/features.geojson') as response:
+        counties = json.load(response)
+    import plotly.express as px
+    df = pd.read_csv('data/map_data.csv')
+    print(column)
+    fig = px.choropleth_mapbox(df, geojson=counties, color=column,
+                               locations="id",
+                               center={'lat': 62.598584, 'lon': 12.961619},
+                               mapbox_style="carto-positron", zoom=4, hover_name='NAME_1',
+                               hover_data=['Deaths', 'Mobility',
+                                           'Tested_Confirmed', 'ICU_Patients'],
+                               color_continuous_scale=plotly.colors.diverging.RdYlGn[::-1],
+                               #labels={'id':'Unique ID'},
+                               category_orders={'id': None})
+    fig.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
+    fig.update_layout(hovermode="closest", width=800, height=700)
     map_graph = dcc.Graph(id="Map", figure=fig)
     return html.Div([map_graph])
 
@@ -226,18 +262,18 @@ def get_selected_map_date(date_index):
               [Input(f"{item}", 'n_clicks')for item in active_map],
               [State(f"{item}", 'active') for item in active_map]
               )
-def update_active_button(death, cases, iva, death_state, cases_state, iva_state):
+def update_active_button(death, cases, iva, mobility, death_state, cases_state, iva_state, mobility_state):
     ctx = dash.callback_context
     if not ctx.triggered:
-        button_id = 'map_death'
+        button_id = 'mobility_map'
     else:
         button_id = ctx.triggered[0]['prop_id'].split('.')[0]
     if not death and not cases and not iva:
-        button_id = 'map_death'
-        updating = [True, False, False]
+        button_id = 'mobility_map'
+        updating = [False, False, False, True]
     else:
-        states = [death_state, cases_state, iva_state]
-        updating = [state if button_id not in active else not state for state,
+        states = [death_state, cases_state, iva_state, mobility_state]
+        updating = [False if button_id not in active else True for state,
                     active in zip(states, active_map)]
 
     return updating
@@ -271,6 +307,15 @@ def change_icu_visibility(death, death_active):
     return not death_active
 
 
+@app.callback(Output("political", 'active'),
+              [Input("political", 'n_clicks')],
+              [State("political", 'active')])
+def change_icu_visibility(political, political_active):
+    if not political:
+        return political_active
+    return not political_active
+
+
 @app.callback(Output("per_million", 'active'),
               [Input("per_million", 'n_clicks')],
               [State("per_million", 'active')])
@@ -287,41 +332,27 @@ def change_icu_visibility(confirmed, confirmed_active):
     if not confirmed:
         return confirmed_active
     return not confirmed_active
-# @app.callback([Output(f"{item}", 'active') for item in countries],
-#               [Input(f"{item}", 'n_clicks')for item in countries],
-#               [State(f"{item}", 'active') for item in countries]
-#               )
-# def update_active_button(sweden, finland, denmark, norway, iceland,
-#                          sweden_active, finland_active, denmark_active, norway_active, iceland_active):
-#     ctx = dash.callback_context
-#     if not ctx.triggered:
-#         button_id = 'Sweden'
-#         [True, True, True, True, True]
-#     else:
-#         button_id = ctx.triggered[0]['prop_id'].split('.')[0]
-#     if not sweden and not finland and not denmark and not norway and not iceland:
-#         button_id = ''
-#         updating = [True, True, True, True, True]
-#     else:
-#         states = [sweden_active, finland_active,
-#                   denmark_active, norway_active, iceland_active]
-#         updating = [state if button_id not in active else not state for state,
-#                     active in zip(states, countries)]
-#     return updating
 
 
-def plot_graph_with_mobility(data, scale='linear'):
+def plot_graph_with_mobility(data, politics, per_mn, scale="linear"):
+    titley = ''
+    if per_mn:
+        titley = "Number of peopler per Million"
+    else:
+        titley = "Number of People"
     fig = make_subplots(specs=[[{"secondary_y": True}]])
+    max_val = 0
     for country, df in data.items():
         color = colors[country]
         for col in df.columns:
-            print(col)
             if 'mobility' not in col:
                 fig.add_trace(go.Scatter(
-                    x=df.index, y=df[col], name=country+col, line={'dash': lines[col], 'color': color},), secondary_y=True)
+                    x=df.index, y=df[col], name=country+' '+legends[col], line={'dash': lines[col], 'color': color},), secondary_y=True)
             else:
+                if max_val < df[col].max():
+                    max_val = df[col].max()
                 fig.add_trace(go.Scatter(
-                    x=df.index, y=df[col], name="mobility " + country, fill='tozeroy', fillcolor=fillcolors[country], line={'color': color}), secondary_y=False
+                    x=df.index, y=df[col], name="Mobility " + country, fill='tozeroy', fillcolor=fillcolors[country], line={'color': color}), secondary_y=False
                 )
 
     fig.update_layout(template="plotly_white", title_text="Covid 19 Analysis",
@@ -334,56 +365,82 @@ def plot_graph_with_mobility(data, scale='linear'):
     fig.update_yaxes(title_text="Mobility %",
                      secondary_y=False)
 
-    fig.update_yaxes(title_text="Number of People", secondary_y=True)
+    fig.update_yaxes(title_text=titley, secondary_y=True)
+    if politics:
+        fig = add_political_decision(fig, max_val)
 
     return fig
 
 
-def plot_graph(data, scale='linear', end_date=None):
+def plot_graph(data, politics, per_mn, scale='linear', end_date=None):
+    titley = ''
+    if per_mn:
+        titley = "Number of peopler per Million"
+    else:
+        titley = "Number of People"
     fig = go.Figure()
     # if not end_date:
     #     if isinstance(end_date, int):
     #         end_date = end_date + 1
     #     else:
     #         end_date = end_date + timedelta(days=1)
+    max_val = 0
     for country, df in data.items():
         color = colors[country]
         for col in df.columns:
+            if max_val < df[col].max():
+                max_val = df[col].max()
+
             fig.add_trace(go.Scatter(
-                x=df.index, y=df[col], name=country+col, line={'dash': lines[col], 'color': color}))
+                x=df.index, y=df[col], name=country+' '+legends[col], line={'dash': lines[col], 'color': color}))
     fig.update_layout(template="plotly_white", title_text="Covid 19 Analysis",
                       # xaxis=dict(tickmode='linear', fixedrange=True), xaxis_range=[data.index[0], end_date],
                       xaxis_title="Dates",
-                      yaxis_title="Number of people", yaxis=dict(fixedrange=True),
+                      yaxis_title=titley, yaxis=dict(fixedrange=True),
                       hovermode='x',
                       xaxis_rangeslider_visible=False)  # annotations=[dict(x=1, y=0, text="Updated {}".format(str(date)[:10] + ' 03:00 CET'),
     #                  showarrow=False, xref='paper', yref='paper',
     #                 xanchor='right', yanchor='bottom', xshift=0, yshift=0, font=dict(color="red", size=8.5))])
     if scale == 'on':
         fig.update_layout(yaxis_type='log', yaxis_exponentformat="power")
+    if politics:
+        fig = add_political_decision(fig, max_val)
+
     return fig
 
 
-# def plot_graph(data, x_title, date, scale='linear', end_date=None):
-#     fig = go.Figure()
-#     if not end_date:
-#         end_date = data.index[-1]
-#         if isinstance(end_date, int):
-#             end_date = end_date + 1
-#         else:
-#             end_date = end_date + timedelta(days=1)
-#     for col in data:
-#         fig.add_trace(go.Scatter(x=data.index, y=data[col], name=col))
-#     fig.update_layout(template="plotly_white", title_text="Covid 19 Analysis",
-#                       xaxis_title='Dates', xaxis=dict(tickmode='linear', fixedrange=True), xaxis_range=[data.index[0], end_date],
-#                       yaxis_title="Selected inputs", yaxis=dict(fixedrange=True),
-#                       hovermode='x',
-#                       xaxis_rangeslider_visible=False, annotations=[dict(x=1, y=0, text="Updated {}".format(str(date)[:10] + ' 03:00 CET'),
-#                                                                          showarrow=False, xref='paper', yref='paper',
-#                                                                          xanchor='right', yanchor='bottom', xshift=0, yshift=0, font=dict(color="red", size=8.5))])
-#     if scale == 'on':
-#         fig.update_layout(yaxis_type='log', yaxis_exponentformat="power")
-#     return fig
+def add_political_decision(fig, max_val, politics=False):
+    df_dec = pd.read_csv('data/decisions.csv')
+    df_dec['Date'] = pd.to_datetime(df_dec['Date'], yearfirst=True)
+    df_dec = df_dec.set_index('Date')
+    fig.add_trace(go.Scatter(
+        x=df_dec.index,
+        marker_symbol='x-dot',
+        marker_line_color="black",
+        marker_line_width=2, marker_size=10,
+        y=np.repeat(max_val, df_dec.shape[0]),
+        mode="markers",
+        text=df_dec['Event'],
+        hoverinfo="text",
+        #hovertemplate="y: %{max_val}",
+        # hovertext='text',
+        hoverlabel=dict(bgcolor='rgba(7, 164, 181, 0.5)'),
+        marker=dict(color=px.colors.sequential.RdBu[-2]), name='Swedish Political Decisions'))
+
+    fig.update_layout(
+        # Line Vertical
+        shapes=[dict(
+            type="line",
+            x0=date,
+            y0=0,
+            x1=date,
+            y1=max_val,
+            line=dict(
+                color="RoyalBlue",
+                width=2
+            )
+        ) for date in df_dec.index])
+    return fig
 
 
 def get_date_from_index(date_index):
