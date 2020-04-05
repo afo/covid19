@@ -32,7 +32,7 @@ def get_data():
     latest_data = death_update(countries)
     df_deaths = pd.concat([df_deaths, latest_data])
     # Start from March 10 before first deaths
-    df_deaths = df_deaths[datetime(2020, 3, 10):]
+    df_deaths = df_deaths[datetime(2020, 3, 8):]
     # Fix faulty Iceland data
     df_deaths.loc[datetime(2020, 3, 15, 0, 0, 0), 'Iceland'] = 0
     df_deaths.loc[datetime(2020, 3, 20, 0, 0, 0,), 'Iceland'] = 1
