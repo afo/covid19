@@ -8,6 +8,8 @@ import json
 import numpy as np
 import pandas as pd
 import pickle
+import os
+from flask import send_from_directory
 from button_callbacks import button_callbacks
 
 import layout
@@ -111,6 +113,13 @@ def plot_map(date_index, total, iva, death, mobility):
     return html.Div([map_graph])
 
 
+STATIC_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static')
+
+# Used for HTTP Health Check
+@app.server.route('/static/<resource>')
+def serve_static(resource):
+    return send_from_directory(STATIC_PATH, resource)
+
 if __name__ == "__main__":
-    app.run_server(debug=True)
+    app.run_server(debug=True, host='0.0.0.0')
     pass
