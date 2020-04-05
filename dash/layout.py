@@ -12,7 +12,7 @@ def generate_layout():
         dcc.Tabs(
             parent_className='custom-tabs',
             className='custom-tabs-container',
-            children=[dcc.Tab(label="Death Analysis", children=[html.Div([
+            children=[dcc.Tab(label="Nordic Analysis", children=[html.Div([
                 html.Div("Select Inputs", className="app-subheader"),
                 html.Hr(),
                 # html.Div([
@@ -40,7 +40,7 @@ def generate_layout():
                          className="twelve columns"),
             ])], className='custom-tab',
                 selected_className='custom-tab--selected'),
-                dcc.Tab(label="Regional map", children=[
+                dcc.Tab(label="Swedish Regional Map", children=[
                     html.Br(),
                     html.Br(),
                     html.Div([
