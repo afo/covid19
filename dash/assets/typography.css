@@ -2,11 +2,12 @@ body {
     font-family: sans-serif;
 }
 label {
-    color: grey,
-    text-
+    color: rgb(43, 43, 43);
+    font-weight: lighter;
+    font-size: 15px;
 }
 h1, h2, h3, h4, h5, h6 {
-    color: grey
+    color: black
 }
 
 text[style*="font-size: 9px"] {

@@ -1,0 +1,47 @@
+---
+title: csv to json
+layout: default
+---
+Test
+    <div id="table_info"></div>
+    
+    <div id="explanation"></div>
+    
+    <h2>Let's talk about data</h2>
+    <table id="table_id">
+    </table>
+
+    <div id="try"></div>
+
+    <!-- Don't need jQuery for Tabletop, but using it for this example -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/tabletop.js/1.5.1/tabletop.min.js'></script>
+    <script type="text/javascript">
+      var public_spreadsheet_url = 'https://docs.google.com/spreadsheets/d/1dBiaBcgKsEg2rGO6s1gqsghUsHP2iIN6OcQBse5Z3hU/edit?usp=sharing';
+      $(document).ready( function() {
+        Tabletop.init( { key: public_spreadsheet_url,
+                         callback: showInfo,
+                         prettyColumnNames: true,
+                         debug: true } )
+      })
+        
+      function showInfo(data, tabletop) {
+        $("#table_id").append(" <tr> ");
+        $.each( tabletop.sheets("Sheet1").column_names, function(i, data) {
+          var data = $('<th>' + tabletop.sheets("Sheet1").column_names[i] + '</th>')
+          data.append(data.description);
+          data.appendTo("#table_id");
+        })
+        $("#table_id").append(" </tr> ");
+        var data = tabletop.sheets("Sheet1").toArray()
+        for (var i=0; i < data[0].length; i++) {
+          $("#table_id").append(" <tr> ");
+          for (var j=0; j < data[i].length; j++) {
+            $("#table_id").append(" <td> "+data[i][j]+" </td> ");
+        }
+        $("#table_id").append(" </tr> ");
+      }
+        
+      }
+      document.write("The published spreadsheet is located at <a target='_new' href='" + public_spreadsheet_url + "'>" + public_spreadsheet_url + "</a>");    
+    </script>
