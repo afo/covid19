@@ -2,7 +2,7 @@
 
     background-color: #fff;
     border-radius: 4px;
-    border: 1px solid #ccc;
+    border: 1px solid #1693D7;
     color: #333;
     display: table;
     border-spacing: 0;
@@ -28,10 +28,10 @@
 }
 .Select--multi .Select-value {
     background-color: #ffffff;
-    background-color: rgba(110, 116, 122, 0.08);
+    background-color: #E8F4FF;
     border-radius: 2px;
-    border: 1px solid #3e464e;
-    color: #606366;
+    border: 1px solid #1693D7;
+    color:#1693D7;
     display: inline-block;
     font-size: .9em;
     line-height: 1.4;
@@ -41,5 +41,19 @@
 
 }
 .Select-menu-outer {
+    background-color: whitesmoke;
+}
+.Select--multi .Select-multi-value-wrapper, .Select-arrow {
+    display: inline-block;
+    background-color: whitesmoke;
+}
+.Select--multi .Select-clear-zone {
+    width: 17px;
+    background-color: whitesmoke;
+}
+.Select, .Select div, .Select input, .Select span {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
     background-color: whitesmoke;
 }

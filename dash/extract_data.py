@@ -53,6 +53,7 @@ def get_data():
     df_pop = df_pop.pivot_table(
         columns='Country or area', values='Population(1 July 2019)')[df.columns]
     df_pop = df_pop / 1000000
+
     df_deaths_per_mn = pd.DataFrame(index=df_deaths.index)
 
     df_confirmed_per_mn = pd.DataFrame(index=df_confirmed.index)
@@ -76,6 +77,21 @@ def get_data():
         country_df['Cases'] = df_confirmed[country]
         country_df['Cases_per_mn'] = df_confirmed_per_mn[country]
         country_dict[country] = country_df
+
+    mobility_url = "https://www.data.gouv.fr/en/datasets/r/0e56f0f4-6a82-48d4-b677-96e950100176"
+    mobility_cities = {'Sweden': 'Stockholm', 'Denmark': 'Copenhagen'}
+    for coun, ci in mobility_cities.items():
+        mobility = get_mobility(ci)
+        country_df = country_dict[coun]
+        country_df['mobility'] = mobility
+        country_dict[coun] = country_df
+
+    # icu data, sweden only right now
+    icu = pd.read_csv('data/swe_icu.csv')
+    icu.index = pd.to_datetime(icu['Date'])
+    swe = country_dict['Sweden']
+    swe['ICU'] = icu['total_icu']
+    country_dict['Sweden'] = swe
 
     with open('dates.pkl', 'wb') as f:
         dates = {'death_dates': df_deaths.index,
@@ -127,3 +143,14 @@ def confirm_update(country=None):
         return(df[country])
     else:
         return df
+
+
+def get_mobility(city):
+    mobility = pd.read_csv(
+        "https://www.data.gouv.fr/en/datasets/r/0e56f0f4-6a82-48d4-b677-96e950100176")
+    mobility['date'] = pd.to_datetime(mobility['date'])
+    city = mobility[mobility['city'] == city].copy()
+    city.index = city['date']
+    city['mobility'] = city['percentage']
+    city = city.drop(['date', 'city', 'percentage'], axis=1)
+    return city

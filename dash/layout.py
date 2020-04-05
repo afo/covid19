@@ -9,15 +9,25 @@ from extract_data import get_data
 
 def generate_layout():
     layout = html.Div(className='container', children=[
-        dcc.Tabs([
-            dcc.Tab(label="Death Analysis", children=[html.Div([
-                html.Div("Select plot", className="app-subheader"),
-                generate_buttons(),
+        dcc.Tabs(
+            parent_className='custom-tabs',
+            className='custom-tabs-container',
+            children=[dcc.Tab(label="Death Analysis", children=[html.Div([
+                html.Div("Select Inputs", className="app-subheader"),
                 html.Hr(),
-                html.Label("Countries", style={'font-weight': 'bold'}),
+                # html.Div([
+                html.Label("Countries", style={
+                    'font-weight': 'bold', 'font-size': '18px'}),
+                #     country_buttons(),
+                # ]),
                 html.Br(),
                 country_selection(),
                 html.Br(),
+                html.Label("Select Features", style={
+                           'font-weight': 'bold', 'font-size': '18px'}),
+                html.Div(children=generate_option_buttons(),
+                         id="testing",
+                         style={'display': 'inline-block'}, className="twelve columns"),
                 html.Div([html.Div(id="visible_dates", children=[html.Label("Select date interval", style={'font-weight': 'bold'}),
                                                                  html.Br(),
                                                                  dcc.DatePickerRange(
@@ -28,38 +38,41 @@ def generate_layout():
                 ], className="twelve columns"),
                 html.Div([html.Div(id="deaths_plot")],
                          className="twelve columns"),
-            ])]),
-            dcc.Tab(label="Regional map", children=[
-                html.Br(),
-                html.Br(),
-                html.Div([
-                    html.Div(html.Label("Show"), className="three columns", style={
+            ])], className='custom-tab',
+                selected_className='custom-tab--selected'),
+                dcc.Tab(label="Regional map", children=[
+                    html.Br(),
+                    html.Br(),
+                    html.Div([
+                        html.Div(html.Label("Show"), className="three columns", style={
                              'text-align': 'center'}),
-                    html.Div(dbc.ButtonGroup(
-                        generate_map_buttons()), className="six columns")
-                ], className="twelve columns"),
-                html.Br(),
-                html.Br(),
-                html.Br(),
-                html.Div([
-                    html.Div([html.Label("Move Forward in time")],
-                             className="three columns", style={
+                        html.Div(dbc.ButtonGroup(
+                            generate_map_buttons()), className="six columns")
+                    ], className="twelve columns"),
+                    html.Br(),
+                    html.Br(),
+                    html.Br(),
+                    html.Div([
+                        html.Div([html.Label("Move Forward in time")],
+                                 className="three columns", style={
                              'text-align': 'center'}),
-                    html.Div(generate_date_slider(), className="six columns"),
-                    html.Div(id="selected-date-map", style={
-                        'text-align': 'center'})], className='twelve columns'),
-                html.Br(),
-                html.Br(),
-                html.Br(),
-                html.Br(),
-                html.Div([
-                    html.Div(id="Map")
-                ])]),
+                        html.Div(generate_date_slider(),
+                                 className="six columns"),
+                        html.Div(id="selected-date-map", style={
+                            'text-align': 'center'})], className='twelve columns'),
+                    html.Br(),
+                    html.Br(),
+                    html.Br(),
+                    html.Br(),
+                    html.Div([
+                        html.Div(id="Map")
+                    ])], className='custom-tab',
+                selected_className='custom-tab--selected'),
 
-            html.Div(id="data", style={
-                     'display': 'none'}, children=get_data()),
-            html.Div(id="which_plot", style={'display': 'none'})
-        ])])
+                html.Div(id="data", style={
+                    'display': 'none'}, children=get_data()),
+                html.Div(id="which_plot", style={'display': 'none'})
+            ])])
     return layout
 
 
@@ -71,8 +84,21 @@ def checkboxes(tab_name):
     return html.Div(children=[country_div, buttons])
 
 
+def generate_option_buttons():
+    dropdown_mobility = dbc.Button(
+        "Mobility", active=False,
+        id="mobility_index"
+    )
+    dropdown_icu = dbc.Button("ICU Cases", active=False, id="ICU")
+    dropdown_confirmed = dbc.Button(
+        "Confirmed Cases", active=False, id="confirmed")
+    death = dbc.Button("Deaths", active=True, id="death")
+    pop_button = dbc.Button("Per Million", active=False, id="per_million")
+    return [death, dropdown_mobility, dropdown_icu, dropdown_confirmed, pop_button]
+
+
 def generate_buttons():
-    deaths = dbc.Button('Deaths', id="df_deaths")
+    deaths = dbc.Button('Deaths', id="df_deaths", active=True)
     deaths_mn = dbc.Button(
         'Deaths per Mn', id="df_deaths_per_mn")
     deaths_1 = dbc.Button('Deaths since first',
@@ -80,6 +106,43 @@ def generate_buttons():
     deaths_mn_1 = dbc.Button(
         'Deaths per Mn since first', id="df_deaths_per_mn_1")
     return html.Div(children=[deaths, deaths_mn, deaths_1, deaths_mn_1])
+
+
+def country_buttons():
+    countries = [{'label': '🇸🇪 Sweden',
+                  'value': 'Sweden'
+                  },
+                 {
+        'label': '🇫🇮 Finland',
+        'value': 'Finland'
+    },
+        {
+        'label': '🇳🇴 Norway',
+        'value': 'Norway'
+    },
+        {
+        'label': '🇩🇰 Denmark',
+        'value': 'Denmark'
+    },
+        {
+        'label': '🇮🇸 Iceland',
+        'value': 'Iceland'
+    }]
+    button_style = {
+        'padding': '.25rem .5rem',
+        'font-size': '10px',
+        'line-height': '1',
+        'border-radius': '10px',
+        'height': '25px',
+        'align-items': 'center',
+        'justify-content': 'center',
+    }
+    buttons = []
+    for country in countries:
+        buttons.append(dbc.Button(
+            country['label'], id=country['value'], style=button_style))
+
+    return dbc.ButtonGroup(buttons, id="country_buttons")
 
 
 def generate_map_buttons():
@@ -120,7 +183,8 @@ def country_selection():
 def generate_scale_buttons():
     linear_button = dbc.Button(
         "Linear", id="linear-button", color="Primary", size="sm")
-    log_button = dbc.Button("Log", id="log-button", color="primary", size="sm")
+    log_button = dbc.Button("Log", id="log-button",
+                            color="primary", size="sm")
     return html.Div([linear_button, log_button])
 
 
