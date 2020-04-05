@@ -7,11 +7,27 @@ import pickle
 
 
 def get_data():
+    """
+    Downloads and cleans  data that is used for the covid19 dashboard
+    Data is collected from:
+        - Confirmed and Deaths (up until the last day)
+            https://pomber.github.io/covid19/timeseries.json
+        - Population
+            https://en.wikipedia.org/wiki/List_of_countries_by_population_(United_Nations)
+        - Mobility index:
+            https://www.data.gouv.fr/en/datasets/r/0e56f0f4-6a82-48d4-b677-96e950100176
+        - Confirmed  and Deaths (Today)
+            https://www.worldometers.info/coronavirus/
+
+    Other datasets such as ICU patients are gathered daily from 
+        https://portal.icuregswe.org/siri/report/inrapp-corona
+
+
+    """
     import requests
     url = 'https://pomber.github.io/covid19/timeseries.json'
     countries = ['Sweden', 'Denmark', 'Norway', 'Finland', 'Iceland']
     df = pd.read_json(url)[countries]
-
     n_rows = df.shape[0]
     df['Sweden'][0]
     dates = []
@@ -102,6 +118,14 @@ def get_data():
 
 
 def death_update(country=None):
+    """Gets the latest status updatedeath of the corona Virus
+
+    Keyword Arguments:
+        country {List or string]} -- Countries/Country to extract data from (default: {None})
+
+    Returns:
+        Pandas DataFrame -- Latest update of covid19
+    """
     url = 'https://www.worldometers.info/coronavirus/'
     header = {
         "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.75 Safari/537.36",
@@ -124,6 +148,14 @@ def death_update(country=None):
 
 
 def confirm_update(country=None):
+    """Gets the latest status update of confimred cases
+
+    Keyword Arguments:
+        country {List or string]} -- Countries/Country to extract data from (default: {None})
+
+    Returns:
+        Pandas DataFrame -- Latest update of covid19
+    """
     url = 'https://www.worldometers.info/coronavirus/'
     header = {
         "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.75 Safari/537.36",
@@ -146,6 +178,14 @@ def confirm_update(country=None):
 
 
 def get_mobility(city):
+    """Gets the latest mobility  data from city mapper
+
+    Arguments:
+        city {String} -- Which city to get data from
+
+    Returns:
+        Pandas Series -- Series of mobility index 
+    """
     mobility = pd.read_csv(
         "https://www.data.gouv.fr/en/datasets/r/0e56f0f4-6a82-48d4-b677-96e950100176")
     mobility['date'] = pd.to_datetime(mobility['date'])
