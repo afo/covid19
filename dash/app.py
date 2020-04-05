@@ -9,6 +9,8 @@ import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 import pickle
+import os
+from flask import send_from_directory
 
 import layout
 
@@ -185,8 +187,15 @@ def get_date_from_index(date_index):
     return date
 
 
+STATIC_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static')
+
+# Used for HTTP Health Check
+@app.server.route('/static/<resource>')
+def serve_static(resource):
+    return send_from_directory(STATIC_PATH, resource)
+
 if __name__ == "__main__":
-    app.run_server(debug=True)
+    app.run_server(debug=True, host='0.0.0.0')
     pass
 
 
