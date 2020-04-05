@@ -19,8 +19,8 @@ The plots are updated every 30mins with the most recent data.
 
 ## 🔢 Data sources
 
-|**Metric**|**Scope**|**Breakdowns**|**Organisation**|**Link**|**Format**|**Latest data point**|**Publication frequency**|**Next publication**|**Retrieved**|**Automated retrieval**|
-|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|
+|Metric|Scope|Breakdowns|Organisation|Link|Format|Latest data point|Publication frequency|Next publication|Retrieved|Automated retrieval|
+|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|
 |Covid-19 confirmed, recovered & deaths  |Global|Per country|Johns Hopkins University Center for Systems Science and Engineering |[Link](https://github.com/CSSEGISandData/COVID-19)|csv|2020-04-04|Daily|2020-04-06|2020-04-05|
 |Population|Global|Per country|Wikipedia|[Link](https://en.wikipedia.org/wiki/List\_of\_countries\_by\_population\_(United\_Nations))|table|2019-07-01|Annual|2020-07-01|?|?|
 |Covid-19 confirmedm recovered & deaths|Global|Per country|Worldometers|[Link](https://www.worldometers.info/coronavirus/)|table|2020-04-05|Daily|2020-04-06|2020-04-05 | |
