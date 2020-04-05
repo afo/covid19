@@ -337,7 +337,7 @@ def change_icu_visibility(confirmed, confirmed_active):
 def plot_graph_with_mobility(data, politics, per_mn, scale="linear"):
     titley = ''
     if per_mn:
-        titley = "Number of peopler per Million"
+        titley = "Number of people per Million"
     else:
         titley = "Number of People"
     fig = make_subplots(specs=[[{"secondary_y": True}]])
@@ -352,7 +352,7 @@ def plot_graph_with_mobility(data, politics, per_mn, scale="linear"):
                 if max_val < df[col].max():
                     max_val = df[col].max()
                 fig.add_trace(go.Scatter(
-                    x=df.index, y=df[col], name="Mobility " + country, fill='tozeroy', fillcolor=fillcolors[country], line={'color': color}), secondary_y=False
+                    x=df.index, y=df[col], name="Mobility " + country, fill='tozeroy', fillcolor=fillcolors[country], line={'color': color,'dash':'dot'}), secondary_y=False
                 )
 
     fig.update_layout(template="plotly_white", title_text="Covid 19 Analysis",
