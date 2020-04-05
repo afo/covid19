@@ -19,15 +19,15 @@ The plots are updated every 30mins with the most recent data.
 
 ## 🔢 Data sources
 
-**Metric**|**Scope**|**Breakdowns**|**Organisation**|**Link**|**Format**|**Latest data point**|**Publication frequency**|**Next publication**|**Retrieved**|**Automated retrieval**
-:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:
-Covid-19 confirmed, recovered & deaths  |Global|Per country|Johns Hopkins University Center for Systems Science and Engineering |[Link](https://github.com/CSSEGISandData/COVID-19)|csv|2020-04-04|Daily|2020-04-06|2020-04-05
-Population|Global|Per country|Wikipedia|[Link](https://en.wikipedia.org/wiki/List\_of\_countries\_by\_population\_(United\_Nations))|table|2019-07-01|Annual|2020-07-01|?|?
-Covid-19 confirmedm recovered & deaths|Global|Per country|Worldometers|[Link](https://www.worldometers.info/coronavirus/)|table|2020-04-05|Daily|2020-04-06|2020-04-05
-New cases of Covid-19 |Sweden|Per region|Folkhälsomyndigheten|[Link](https://www.folkhalsomyndigheten.se/smittskydd-beredskap/utbrott/aktuella-utbrott/covid-19/bekraftade-fall-i-sverige/)|Excel|2020-04-04|Daily|2020-04-05|2020-04-04|To be implemented
-Total cases, deaths & ICU  |Sweden|Per region|Folkhälsomyndigheten|[Link](https://www.folkhalsomyndigheten.se/smittskydd-beredskap/utbrott/aktuella-utbrott/covid-19/bekraftade-fall-i-sverige/)|Excel|2020-04-04|Daily|2020-04-05|2020-04-04
-Mobility index |Sweden|Per region|Google|[Link](https://www.google.com/covid19/mobility/)|PDF and plots|2020-03-29|Random(weekly?)| |2020-04-04|To be implemented
-Number of physicians and nurses |Sweden|Per region|Socialstyrelsen|[Link](https://www.socialstyrelsen.se/statistik-och-data/statistik/statistikamnen/halso-och-sjukvardspersonal/)|Excel|2018|Annual| |2020-04-04|No
+|**Metric**|**Scope**|**Breakdowns**|**Organisation**|**Link**|**Format**|**Latest data point**|**Publication frequency**|**Next publication**|**Retrieved**|**Automated retrieval**|
+|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|
+|Covid-19 confirmed, recovered & deaths  |Global|Per country|Johns Hopkins University Center for Systems Science and Engineering |[Link](https://github.com/CSSEGISandData/COVID-19)|csv|2020-04-04|Daily|2020-04-06|2020-04-05|
+|Population|Global|Per country|Wikipedia|[Link](https://en.wikipedia.org/wiki/List\_of\_countries\_by\_population\_(United\_Nations))|table|2019-07-01|Annual|2020-07-01|?|?|
+|Covid-19 confirmedm recovered & deaths|Global|Per country|Worldometers|[Link](https://www.worldometers.info/coronavirus/)|table|2020-04-05|Daily|2020-04-06|2020-04-05 | |
+|New cases of Covid-19 |Sweden|Per region|Folkhälsomyndigheten|[Link](https://www.folkhalsomyndigheten.se/smittskydd-beredskap/utbrott/aktuella-utbrott/covid-19/bekraftade-fall-i-sverige/)|Excel|2020-04-04|Daily|2020-04-05|2020-04-04|To be implemented|
+|Total cases, deaths & ICU  |Sweden|Per region|Folkhälsomyndigheten|[Link](https://www.folkhalsomyndigheten.se/smittskydd-beredskap/utbrott/aktuella-utbrott/covid-19/bekraftade-fall-i-sverige/)|Excel|2020-04-04|Daily|2020-04-05|2020-04-04| |
+|Mobility index |Sweden|Per region|Google|[Link](https://www.google.com/covid19/mobility/)|PDF and plots|2020-03-29|Random(weekly?)| |2020-04-04|To be implemented|
+|Number of physicians and nurses |Sweden|Per region|Socialstyrelsen|[Link](https://www.socialstyrelsen.se/statistik-och-data/statistik/statistikamnen/halso-och-sjukvardspersonal/)|Excel|2018|Annual| |2020-04-04|No|
 
 
 Source code available at [https://github.com/afo/covid19](https://github.com/afo/covid19) (feel free to contribute 😊)
