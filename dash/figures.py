@@ -132,7 +132,6 @@ def plot_graph(data, politics, per_mn, scale='linear'):
         for col in df.columns:
             if max_val < df[col].max():
                 max_val = df[col].max()
-
             fig.add_trace(go.Scatter(
                 x=df.index, y=df[col], name=country+' '+const.legends[col],
                 line={'dash': const.lines[col], 'color': const.colors[country]}))

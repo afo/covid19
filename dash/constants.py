@@ -2,8 +2,8 @@
 # TODO(@Andreasfo@gmail.com)
 # Fix this so it is not this ugly :)
 dfs = ['df_deaths', 'df_deaths_per_mn', 'df_deaths_1', 'df_deaths_per_mn_1']
-plots = {'death': 'df_deaths',
-         'confirmed': 'Cases',
+plots = {'confirmed': 'Cases',
+         'death': 'df_deaths',
          'ICU': 'ICU',
          'mobility_index': 'mobility',
          'per_million': 'million',

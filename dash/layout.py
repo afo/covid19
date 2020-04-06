@@ -33,9 +33,11 @@ def generate_layout():
                 html.Br(),
                 html.Label("Select Features", style={
                            'font-weight': 'bold', 'font-size': '18px'}),
-                html.Div(children=generate_option_buttons(),
+                html.Div(children=generate_feature_buttons(),
                          id="testing",
                          style={'display': 'inline-block'}, className="twelve columns"),
+                html.Br(),
+                html.Div(id="scaling", children=generate_options_buttons()),
                 html.Div([html.Div(id="visible_dates", children=[html.Label("Select date interval", style={'font-weight': 'bold'}),
                                                                  html.Br(),
                                                                  dcc.DatePickerRange(
@@ -84,7 +86,7 @@ def generate_layout():
     return layout
 
 
-def generate_option_buttons():
+def generate_feature_buttons():
     """Generates button used for options
 
     Buttons used to select which  feature(s) is going to be shown in
@@ -99,8 +101,6 @@ def generate_option_buttons():
             Show intensive care patients
         -Confirmed
             Show confirmed cases
-        -Pop
-            Show feature per million inhabitants instead
         -Political
             Show political decisions instead
 
@@ -115,9 +115,23 @@ def generate_option_buttons():
     dropdown_confirmed = dbc.Button(
         "Confirmed Cases", active=False, id="confirmed")
     death = dbc.Button("Deaths", active=True, id="death")
-    pop_button = dbc.Button("Per Million", active=False, id="per_million")
+
     political = dbc.Button("Political Decisions", active=False, id="political")
-    return [death, dropdown_mobility, dropdown_icu, dropdown_confirmed, pop_button, political]
+    return [death, dropdown_mobility, dropdown_icu, dropdown_confirmed, political]
+
+
+def generate_options_buttons():
+    """Buttons to control  since first/permillion
+        -Pop
+            Show feature per million inhabitants instead
+
+    Returns:
+        list -- list of dbc buttons
+    """
+    pop_button = dbc.Button("Per Million", active=False, id="per_million")
+    since_first_button = dbc.Button(
+        "Since first occurence", active=False, id="since_first")
+    return [pop_button, since_first_button]
 
 
 def country_buttons():

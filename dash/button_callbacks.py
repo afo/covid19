@@ -39,15 +39,6 @@ def button_callbacks(app):
     Returns:
         bool -- State of the button
     """
-    @app.callback(Output("mobility_index", 'active'),
-                  [Input("mobility_index", 'n_clicks')],
-                  [State("mobility_index", 'active')])
-    def change_mobility_visibility(mobility, mobility_active):
-        if not mobility:
-            return mobility_active
-
-        return not mobility_active
-
     @app.callback(Output("ICU", 'active'),
                   [Input("ICU", 'n_clicks')],
                   [State("ICU", 'active')])
@@ -64,14 +55,6 @@ def button_callbacks(app):
             return death_active
         return not death_active
 
-    @app.callback(Output("political", 'active'),
-                  [Input("political", 'n_clicks')],
-                  [State("political", 'active')])
-    def change_icu_visibility(political, political_active):
-        if not political:
-            return political_active
-        return not political_active
-
     @app.callback(Output("per_million", 'active'),
                   [Input("per_million", 'n_clicks')],
                   [State("per_million", 'active')])
@@ -87,3 +70,43 @@ def button_callbacks(app):
         if not confirmed:
             return confirmed_active
         return not confirmed_active
+
+    @app.callback(Output("since_first", 'active'),
+                  [Input("since_first", 'n_clicks')],
+                  [State("since_first", 'active')])
+    def change_icu_visibility(since_first, since_first_active):
+        if not since_first:
+            return since_first_active
+        return not since_first_active
+
+    @app.callback(Output("political", 'active'),
+                  [Input("political", 'n_clicks')],
+                  [State("political", 'active'),
+                      State("since_first", 'active')])
+    def change_icu_visibility(political, political_active, since_first):
+        if since_first:
+            return False
+        if not political:
+            return political_active
+        return not political_active
+
+    @app.callback(Output("mobility_index", 'active'),
+                  [Input("mobility_index", 'n_clicks')],
+                  [State("mobility_index", 'active'),
+                   State("since_first", 'active')])
+    def change_mobility_visibility(mobility, mobility_active, since_first):
+        if since_first:
+            return False
+        if not mobility:
+            return mobility_active
+
+        return not mobility_active
+
+    @app.callback([Output("mobility_index", 'disabled'),
+                   Output("political", 'disabled')],
+                  [Input("since_first", 'active')])
+    def change_to_disabled(since_first_active):
+        if since_first_active:
+            return [True, True]
+        else:
+            return [False, False]
