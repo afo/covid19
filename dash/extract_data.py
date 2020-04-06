@@ -4,6 +4,7 @@ import pandas as pd
 import numpy as np
 import json
 import pickle
+from bs4 import BeautifulSoup as bs
 
 
 def get_data():
@@ -37,7 +38,6 @@ def get_data():
     df['Date'] = dates
     df['Date'] = pd.to_datetime(df['Date'])
     df = df.set_index('Date')
-
 #    df = df.rename(columns={'US':'United States','Korea, South':'South Korea', 'Czechia':'Czech Republic'})
 
     df_deaths = pd.DataFrame(index=df.index)
@@ -48,7 +48,7 @@ def get_data():
     latest_data = death_update(countries)
     df_deaths = pd.concat([df_deaths, latest_data])
     # Start from March 10 before first deaths
-    df_deaths = df_deaths[datetime(2020, 3, 8):]
+    df_deaths = df_deaths[datetime(2020, 1, 31):]
     # Fix faulty Iceland data
     df_deaths.loc[datetime(2020, 3, 15, 0, 0, 0), 'Iceland'] = 0
     df_deaths.loc[datetime(2020, 3, 20, 0, 0, 0,), 'Iceland'] = 1
@@ -108,7 +108,6 @@ def get_data():
     swe = country_dict['Sweden']
     swe['ICU'] = icu['total_icu']
     country_dict['Sweden'] = swe
-
     with open('dates.pkl', 'wb') as f:
         dates = {'death_dates': df_deaths.index,
                  'confirmed_dates': df_confirmed.index}
@@ -186,8 +185,20 @@ def get_mobility(city):
     Returns:
         Pandas Series -- Series of mobility index 
     """
-    mobility = pd.read_csv(
-        "https://www.data.gouv.fr/en/datasets/r/0e56f0f4-6a82-48d4-b677-96e950100176")
+    url = "https://www.data.gouv.fr/en/datasets/citymapper-mobility-index/"
+    url_dataset = None
+    source = requests.get(url)
+    soup = bs(source.content, features='html.parser')
+
+    links = soup.find_all(
+        "a", attrs={'class': 'btn btn-sm btn-primary', 'download': ""})
+    for link in links:
+        href = link.get('href')
+        if href:
+            url_dataset = href
+    if not url_dataset:
+        return None
+    mobility = pd.read_csv(url_dataset)
     mobility['date'] = pd.to_datetime(mobility['date'])
     city = mobility[mobility['city'] == city].copy()
     city.index = city['date']

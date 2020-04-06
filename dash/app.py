@@ -37,8 +37,9 @@ button_callbacks(app)
                Input('ICU', 'active'),
                Input('confirmed', 'active'),
                Input('political', 'active'),
+               Input('since_first', 'active')
                ])
-def update_total_deaths(countries, which_plots, start_date, end_date, scale, mobility, per_mn, check, check1, check2, political):
+def update_total_deaths(countries, which_plots, start_date, end_date, scale, mobility, per_mn, check, check1, check2, political, since_first):
     # TODO(@Andreasfo@gmail.com)
     # Fix this callback inputs. It  triggers for everything
     # Sometimes multiple times in a row. Needs to  be fixed
@@ -58,23 +59,33 @@ def update_total_deaths(countries, which_plots, start_date, end_date, scale, mob
     # Clean this upp, it is not readable at the moment
     # Drag it into a function instead this callback is  way to loong
     for country in countries:
-        country_data = pd.DataFrame()
+        country_data = pd.DataFrame(columns=columns)
         for col in columns:
             if "ICU" in col and "Sweden" not in country:
                 continue
             elif "mobility" in col:
                 try:
-                    country_data[col] = country_dicts[country][col]
+                    country_data[col] = country_dicts[country][col].copy()
                 except Exception as e:
                     continue
             else:
                 if per_mn:
-                    country_data[col] = country_dicts[country][col] / \
+                    country_feature = country_dicts[country][col] / \
                         const.pops[country]
                 else:
-                    country_data[col] = country_dicts[country][col]
-        data[country] = country_data[(country_data.index >= start_date)
-                                     & (country_data.index <= end_date)]
+                    country_feature = country_dicts[country][col]
+                if since_first:
+                    country_feature = country_feature[country_feature > 0]
+                    country_feature = country_feature.reset_index(drop=True)
+
+            country_data[col] = country_feature
+
+        if since_first:
+            data[country] = country_data
+        else:
+            data[country] = country_data[(country_data.index >= start_date)
+                                         & (country_data.index <= end_date)]
+
     if mobility:
         fig = figures.plot_graph_with_mobility(data, political, per_mn)
     else:
