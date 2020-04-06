@@ -65,7 +65,7 @@ def update_total_deaths(countries, which_plots, start_date, end_date, scale, mob
                 continue
             elif "mobility" in col:
                 try:
-                    country_data[col] = country_dicts[country][col].copy()
+                    country_feature = country_dicts[country][col].copy()
                 except Exception as e:
                     continue
             else:
@@ -107,9 +107,10 @@ def get_date_picker(json_obj):
     # So we can se more into the past
     with open('dates.pkl', 'rb') as f:
         dates = pickle.load(f)['death_dates']
-    start_date = dates[0]
+    min_date = dates[0]
+    start_date = dates[37]
     end_date = dates[-1]
-    return start_date, end_date + timedelta(days=1), start_date, end_date
+    return min_date, end_date + timedelta(days=1), start_date, end_date
 
 
 @app.callback(Output('Map', 'children'),
@@ -124,12 +125,14 @@ def plot_map(date_index, total, iva, death, mobility):
     return html.Div([map_graph])
 
 
-STATIC_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static')
+STATIC_PATH = os.path.join(os.path.dirname(
+    os.path.abspath(__file__)), 'static')
 
 # Used for HTTP Health Check
 @app.server.route('/static/<resource>')
 def serve_static(resource):
     return send_from_directory(STATIC_PATH, resource)
+
 
 if __name__ == "__main__":
     app.run_server(debug=True, host='0.0.0.0')
