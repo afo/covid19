@@ -8,6 +8,14 @@ from extract_data import get_data
 
 
 def generate_layout():
+    """Generates the defualt layout for the dashboard
+
+    TODO(@andreasfo@gmail.com)
+    Fix to a much more readable format, too much ugliness inside
+
+    Returns:
+        dash html.Div -- layout of the dashboard
+    """
     layout = html.Div(className='container', children=[
         dcc.Tabs(
             parent_className='custom-tabs',
@@ -76,15 +84,29 @@ def generate_layout():
     return layout
 
 
-def checkboxes(tab_name):
-    countries = country_selection(tab_name)
-    country_div = html.Div(children=[countries], style={
-        'display': 'inline-block'})
-    buttons = generate_buttons()
-    return html.Div(children=[country_div, buttons])
-
-
 def generate_option_buttons():
+    """Generates button used for options
+
+    Buttons used to select which  feature(s) is going to be shown in
+    the main dashboard plot.
+
+    Current buttons:
+        -death
+            Show total amount of deaths
+        -mobility
+            Show mobility index
+        -ICU
+            Show intensive care patients
+        -Confirmed
+            Show confirmed cases
+        -Pop
+            Show feature per million inhabitants instead
+        -Political
+            Show political decisions instead
+
+    Returns:
+        List  of dbc.Buttons -- 
+    """
     dropdown_mobility = dbc.Button(
         "Mobility", active=False,
         id="mobility_index"
@@ -98,18 +120,15 @@ def generate_option_buttons():
     return [death, dropdown_mobility, dropdown_icu, dropdown_confirmed, pop_button, political]
 
 
-def generate_buttons():
-    deaths = dbc.Button('Deaths', id="df_deaths", active=True)
-    deaths_mn = dbc.Button(
-        'Deaths per Mn', id="df_deaths_per_mn")
-    deaths_1 = dbc.Button('Deaths since first',
-                          id="df_deaths_1")
-    deaths_mn_1 = dbc.Button(
-        'Deaths per Mn since first', id="df_deaths_per_mn_1")
-    return html.Div(children=[deaths, deaths_mn, deaths_1, deaths_mn_1])
-
-
 def country_buttons():
+    """Generates the country buttons for the layout
+
+
+    TODO(@andreasfo@gmail.com)
+        Fix to use this one instead of the dropdown menu
+    Returns:
+        dbcButtonGroup -- A  button group of all countries
+    """
     countries = [{'label': '🇸🇪 Sweden',
                   'value': 'Sweden'
                   },
@@ -147,6 +166,12 @@ def country_buttons():
 
 
 def generate_map_buttons():
+    """Generates the buttons used to switch the map view
+
+    TODO(@andreasfo@gmail.com)
+    Returns:
+        List of dbc.Buttons -- Buttons to select map view
+    """
     deaths = dbc.Button("Total deaths", id="map_death")
     total_cases = dbc.Button("Total Cases", id='map_total_cases')
     iva_cases = dbc.Button("Total IVA-patients", id='map_iva_patients')
@@ -155,6 +180,11 @@ def generate_map_buttons():
 
 
 def country_selection():
+    """Generates the country selection dropdown 
+
+    Returns:
+        Dash html.Div -- Div of the country selection menu
+    """
     options = [{
         'label': '🇸🇪 Sweden',
         'value': 'Sweden'
@@ -183,6 +213,11 @@ def country_selection():
 
 
 def generate_scale_buttons():
+    """Create the log scale  on-off button
+
+    Returns:
+        Dash  html.Div -- scalebutton
+    """
     linear_button = dbc.Button(
         "Linear", id="linear-button", color="Primary", size="sm")
     log_button = dbc.Button("Log", id="log-button",
@@ -191,6 +226,11 @@ def generate_scale_buttons():
 
 
 def generate_date_slider():
+    """Generates the Date slider for map
+
+    Returns:
+        Dash core compnent  Slider -- Date slider for map
+    """
     with open('dates.pkl', 'rb') as f:
         dates = pickle.load(f)['confirmed_dates']
     min = 0
