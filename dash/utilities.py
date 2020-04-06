@@ -23,7 +23,9 @@ def get_column_to_show(children):
             if "million" not in col:
                 if 'poli' not in col:
                     cols.append(col)
-
+    if 'df_deaths' in cols:
+        cols.pop(0)
+        cols.append('df_deaths')
     return cols
 
 
