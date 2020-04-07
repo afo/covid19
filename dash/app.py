@@ -24,7 +24,6 @@ server = app.server
 app.layout = layout.generate_layout()
 button_callbacks(app)
 
-
 @app.callback(Output('deaths_plot', 'children'),
               [Input('country_selection', 'value'),
                Input('testing', 'children'),
@@ -135,5 +134,9 @@ def serve_static(resource):
 
 
 if __name__ == "__main__":
-    app.run_server(debug=True, host='0.0.0.0')
+    if os.environ['ENVIRONMENT'] == "dev":
+        debugging = True
+    else:
+        debugging = False
+    app.run_server(debug=debugging, host='0.0.0.0')
     pass
