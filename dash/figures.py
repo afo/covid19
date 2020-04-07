@@ -87,6 +87,8 @@ def plot_graph_with_mobility(data, politics, per_mn, scale="linear"):
             else:
                 if max_val < df[col].max():
                     max_val = df[col].max()
+                if country not in ['Sweden', 'Denmark']:
+                    continue
                 fig.add_trace(go.Scatter(
                     x=df.index, y=df[col], name="Mobility " + country, fill='tozeroy',
                     fillcolor=const.fillcolors[country], line={'color': const.colors[country], 'dash': 'dot'}),
@@ -132,7 +134,6 @@ def plot_graph(data, politics, per_mn, scale='linear'):
         for col in df.columns:
             if max_val < df[col].max():
                 max_val = df[col].max()
-
             fig.add_trace(go.Scatter(
                 x=df.index, y=df[col], name=country+' '+const.legends[col],
                 line={'dash': const.lines[col], 'color': const.colors[country]}))

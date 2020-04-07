@@ -1,4 +1,4 @@
-# 🦠 Open Source Project: covid19nordics.se
+# 🦠 Open Source Project: [covid19nordics.se](http://covid19nordics.se)
 
 ## 📈 Description
 

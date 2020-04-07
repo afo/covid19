@@ -37,8 +37,9 @@ button_callbacks(app)
                Input('ICU', 'active'),
                Input('confirmed', 'active'),
                Input('political', 'active'),
+               Input('since_first', 'active')
                ])
-def update_total_deaths(countries, which_plots, start_date, end_date, scale, mobility, per_mn, check, check1, check2, political):
+def update_total_deaths(countries, which_plots, start_date, end_date, scale, mobility, per_mn, check, check1, check2, political, since_first):
     # TODO(@Andreasfo@gmail.com)
     # Fix this callback inputs. It  triggers for everything
     # Sometimes multiple times in a row. Needs to  be fixed
@@ -58,23 +59,33 @@ def update_total_deaths(countries, which_plots, start_date, end_date, scale, mob
     # Clean this upp, it is not readable at the moment
     # Drag it into a function instead this callback is  way to loong
     for country in countries:
-        country_data = pd.DataFrame()
+        country_data = pd.DataFrame(columns=columns)
         for col in columns:
             if "ICU" in col and "Sweden" not in country:
                 continue
             elif "mobility" in col:
                 try:
-                    country_data[col] = country_dicts[country][col]
+                    country_feature = country_dicts[country][col].copy()
                 except Exception as e:
                     continue
             else:
                 if per_mn:
-                    country_data[col] = country_dicts[country][col] / \
+                    country_feature = country_dicts[country][col] / \
                         const.pops[country]
                 else:
-                    country_data[col] = country_dicts[country][col]
-        data[country] = country_data[(country_data.index >= start_date)
-                                     & (country_data.index <= end_date)]
+                    country_feature = country_dicts[country][col]
+                if since_first:
+                    country_feature = country_feature[country_feature > 0]
+                    country_feature = country_feature.reset_index(drop=True)
+
+            country_data[col] = country_feature
+
+        if since_first:
+            data[country] = country_data
+        else:
+            data[country] = country_data[(country_data.index >= start_date)
+                                         & (country_data.index <= end_date)]
+
     if mobility:
         fig = figures.plot_graph_with_mobility(data, political, per_mn)
     else:
@@ -96,9 +107,10 @@ def get_date_picker(json_obj):
     # So we can se more into the past
     with open('dates.pkl', 'rb') as f:
         dates = pickle.load(f)['death_dates']
-    start_date = dates[0]
+    min_date = dates[0]
+    start_date = dates[37]
     end_date = dates[-1]
-    return start_date, end_date + timedelta(days=1), start_date, end_date
+    return min_date, end_date + timedelta(days=1), start_date, end_date
 
 
 @app.callback(Output('Map', 'children'),
@@ -113,12 +125,14 @@ def plot_map(date_index, total, iva, death, mobility):
     return html.Div([map_graph])
 
 
-STATIC_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static')
+STATIC_PATH = os.path.join(os.path.dirname(
+    os.path.abspath(__file__)), 'static')
 
 # Used for HTTP Health Check
 @app.server.route('/static/<resource>')
 def serve_static(resource):
     return send_from_directory(STATIC_PATH, resource)
+
 
 if __name__ == "__main__":
     app.run_server(debug=True, host='0.0.0.0')
