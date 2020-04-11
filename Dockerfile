@@ -9,7 +9,7 @@ ADD dash /app
 COPY dash/requirements.txt /
 RUN pip install -r requirements.txt
 
-ENV ENVIRONMENT prd
+ENV ENVIRONMENT dev
 
 EXPOSE 8050
 
