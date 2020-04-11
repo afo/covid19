@@ -132,11 +132,12 @@ STATIC_PATH = os.path.join(os.path.dirname(
 def serve_static(resource):
     return send_from_directory(STATIC_PATH, resource)
 
-
 if __name__ == "__main__":
-    if os.environ['ENVIRONMENT'] == "dev":
-        debugging = True
-    else:
-        debugging = False
+    debugging = False
+    try:
+        if os.environ['ENVIRONMENT'] == "dev":
+            debugging=True
+    except KeyError:
+        pass
     app.run_server(debug=debugging, host='0.0.0.0')
     pass
