@@ -85,11 +85,41 @@ def update_total_deaths(countries, which_plots, start_date, end_date, scale, mob
             data[country] = country_data[(country_data.index >= start_date)
                                          & (country_data.index <= end_date)]
 
+
     if mobility:
         fig = figures.plot_graph_with_mobility(data, political, per_mn)
-    else:
-
+        if political:
+            fig.update_layout(height=600, legend = dict(
+                x=1,
+                y=1,
+                bgcolor='rgba(0,0,0,0)'
+                )
+            )
+        else:
+            fig.update_layout(height=600, legend = dict(
+                x=0,
+                y=1,
+                bgcolor='rgba(0,0,0,0)'
+                )
+            )
+    elif political:
         fig = figures.plot_graph(data, political, per_mn, scale)
+        fig.update_layout(height=600, legend = dict(
+            x=1,
+            y=1,
+            bgcolor='rgba(0,0,0,0)'
+            )
+        )
+    else:
+        fig = figures.plot_graph(data, political, per_mn, scale)
+        fig.update_layout(
+            height=600,
+            legend=dict(
+                x=0,
+                y=1,
+                bgcolor='rgba(0,0,0,0)'
+                )
+            )
     fig.update_layout(height=600)
     return dcc.Graph(id="Plot", figure=fig)
 
